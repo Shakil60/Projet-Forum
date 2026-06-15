@@ -1,0 +1,131 @@
+{{define "title"}}{{.Thread.Titre}} — CinéTalk{{end}}
+{{define "content"}}
+{{$thread := .Thread}}
+<article class="thread-detail">
+    <div class="thread-head">
+        <div>
+            <h1>{{$thread.Titre}}</h1>
+            <div class="thread-meta">
+                <span class="state state-{{$thread.Etat}}">{{$thread.Etat}}</span>
+                <span>par {{$thread.AuthorName}}</span>
+                <span class="date">{{$thread.CreatedAt}}</span>
+            </div>
+        </div>
+        {{if .CanManage}}
+        <div class="thread-actions">
+            <a class="btn btn-sm" href="/threads/{{$thread.Id}}/edit">Modifier</a>
+            <form action="/threads/{{$thread.Id}}/state" method="POST" class="inline-form state-form">
+                <select name="etat" onchange="this.form.submit()">
+                    <option value="ouvert" {{if eq $thread.Etat "ouvert"}}selected{{end}}>Ouvert</option>
+                    <option value="ferme" {{if eq $thread.Etat "ferme"}}selected{{end}}>Fermé</option>
+                    <option value="archive" {{if eq $thread.Etat "archive"}}selected{{end}}>Archivé</option>
+                </select>
+            </form>
+            <form action="/threads/{{$thread.Id}}/delete" method="POST" class="inline-form" onsubmit="return confirm('Supprimer ce fil et tous ses messages ?');">
+                <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+            </form>
+        </div>
+        {{end}}
+    </div>
+
+    <p class="thread-body">{{$thread.Contenu}}</p>
+    <div class="thread-tags">
+        {{range $thread.Tags}}<a class="tag" href="/?tag={{.Id}}">{{.Nom}}</a>{{end}}
+    </div>
+</article>
+
+<section class="messages-section">
+    <div class="messages-toolbar">
+        <h2>{{.Pagination.Total}} message(s)</h2>
+        <div class="toolbar-controls">
+            <form method="GET" action="/threads/{{$thread.Id}}" class="inline-form">
+                <input type="hidden" name="size" value="{{.SizeParam}}">
+                <label>Trier
+                    <select name="sort" onchange="this.form.submit()">
+                        <option value="recent" {{if eq .Sort "recent"}}selected{{end}}>Plus récents</option>
+                        <option value="ancien" {{if eq .Sort "ancien"}}selected{{end}}>Chronologique</option>
+                        <option value="populaire" {{if eq .Sort "populaire"}}selected{{end}}>Popularité</option>
+                    </select>
+                </label>
+            </form>
+            <form method="GET" action="/threads/{{$thread.Id}}" class="inline-form">
+                <input type="hidden" name="sort" value="{{.Sort}}">
+                <label>Afficher
+                    <select name="size" onchange="this.form.submit()">
+                        <option value="10" {{if eq .SizeParam "10"}}selected{{end}}>10</option>
+                        <option value="20" {{if eq .SizeParam "20"}}selected{{end}}>20</option>
+                        <option value="30" {{if eq .SizeParam "30"}}selected{{end}}>30</option>
+                        <option value="all" {{if eq .SizeParam "all"}}selected{{end}}>Tout</option>
+                    </select>
+                </label>
+            </form>
+        </div>
+    </div>
+
+    {{if .CurrentUser}}
+        {{if eq $thread.Etat "ouvert"}}
+        <form class="message-form" action="/threads/{{$thread.Id}}/messages" method="POST">
+            <textarea name="contenu" rows="3" placeholder="Écrivez votre message..." required></textarea>
+            <button type="submit" class="btn btn-accent">Publier</button>
+        </form>
+        {{else}}
+        <p class="notice">Ce fil est {{$thread.Etat}}, il n'accepte plus de nouveaux messages.</p>
+        {{end}}
+    {{else}}
+        <p class="notice"><a href="/login">Connectez-vous</a> pour participer à la discussion.</p>
+    {{end}}
+
+    <div class="message-list">
+        {{range .Messages}}
+        <article class="message" id="message-{{.Id}}">
+            <div class="message-header">
+                <span class="message-author">{{.AuthorName}}</span>
+                <span class="date">{{.CreatedAt}}</span>
+            </div>
+            <p class="message-body">{{.Contenu}}</p>
+            <div class="message-footer">
+                <div class="reactions" data-message-id="{{.Id}}">
+                    {{if $.CurrentUser}}
+                    <button class="reaction-btn like {{if eq .UserReaction "like"}}active{{end}}" data-type="like">
+                        👍 <span class="count-like">{{.Likes}}</span>
+                    </button>
+                    <button class="reaction-btn dislike {{if eq .UserReaction "dislike"}}active{{end}}" data-type="dislike">
+                        👎 <span class="count-dislike">{{.Dislikes}}</span>
+                    </button>
+                    {{else}}
+                    <span class="reaction-static">👍 {{.Likes}}</span>
+                    <span class="reaction-static">👎 {{.Dislikes}}</span>
+                    {{end}}
+                    <span class="score">Score : <span class="count-score">{{.Score}}</span></span>
+                </div>
+                {{if $.CurrentUser}}
+                <div class="message-actions">
+                    {{if eq .AuthorId $.CurrentUser.Id}}
+                    <a class="link-btn" href="/messages/{{.Id}}/edit">Modifier</a>
+                    {{end}}
+                    {{if or (eq .AuthorId $.CurrentUser.Id) $.CurrentUser.IsAdmin}}
+                    <form action="/messages/{{.Id}}/delete" method="POST" class="inline-form" onsubmit="return confirm('Supprimer ce message ?');">
+                        <button type="submit" class="link-btn danger">Supprimer</button>
+                    </form>
+                    {{end}}
+                </div>
+                {{end}}
+            </div>
+        </article>
+        {{else}}
+        <p class="empty">Aucun message pour l'instant.</p>
+        {{end}}
+    </div>
+
+    {{$p := .Pagination}}
+    {{if gt $p.TotalPages 1}}
+    <nav class="pagination">
+        {{if $p.HasPrev}}<a href="/threads/{{$thread.Id}}?page={{$p.PrevPage}}&size={{$.SizeParam}}&sort={{$.Sort}}">‹ Précédent</a>{{end}}
+        {{range $p.Pages}}
+            <a class="{{if eq . $p.Page}}active{{end}}" href="/threads/{{$thread.Id}}?page={{.}}&size={{$.SizeParam}}&sort={{$.Sort}}">{{.}}</a>
+        {{end}}
+        {{if $p.HasNext}}<a href="/threads/{{$thread.Id}}?page={{$p.NextPage}}&size={{$.SizeParam}}&sort={{$.Sort}}">Suivant ›</a>{{end}}
+    </nav>
+    {{end}}
+</section>
+{{end}}

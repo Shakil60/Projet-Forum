@@ -1,0 +1,71 @@
+{{define "title"}}Accueil — CinéTalk{{end}}
+{{define "content"}}
+<section class="hero">
+    <h1>Discutez de vos films et séries préférés</h1>
+    <p>Posez vos questions, partagez vos avis et débattez avec la communauté.</p>
+</section>
+
+{{if .CurrentUser}}
+<form class="search-bar" action="/" method="GET">
+    <input type="text" name="q" value="{{.Search}}" placeholder="Rechercher un sujet ou un genre...">
+    <button type="submit" class="btn btn-accent">Rechercher</button>
+</form>
+{{end}}
+
+<div class="filters">
+    <div class="chips">
+        <a class="chip {{if eq .ActiveTagId 0}}active{{end}}" href="/">Tous</a>
+        {{range .Tags}}
+            <a class="chip {{if eq $.ActiveTagId .Id}}active{{end}}" href="/?tag={{.Id}}">{{.Nom}}</a>
+        {{end}}
+    </div>
+    <form class="size-form" method="GET" action="/">
+        {{if .ActiveTagId}}<input type="hidden" name="tag" value="{{.ActiveTagId}}">{{end}}
+        {{if .Search}}<input type="hidden" name="q" value="{{.Search}}">{{end}}
+        <label>Afficher
+            <select name="size" onchange="this.form.submit()">
+                <option value="10" {{if eq .SizeParam "10"}}selected{{end}}>10</option>
+                <option value="20" {{if eq .SizeParam "20"}}selected{{end}}>20</option>
+                <option value="30" {{if eq .SizeParam "30"}}selected{{end}}>30</option>
+                <option value="all" {{if eq .SizeParam "all"}}selected{{end}}>Tout</option>
+            </select>
+        </label>
+    </form>
+</div>
+
+{{if .ActiveTagName}}<p class="filter-info">Genre filtré : <strong>{{.ActiveTagName}}</strong></p>{{end}}
+{{if .Search}}<p class="filter-info">Résultats de recherche pour : <strong>{{.Search}}</strong></p>{{end}}
+
+<div class="thread-list">
+    {{range .Threads}}
+    <article class="thread-card">
+        <div class="thread-card-main">
+            <h2><a href="/threads/{{.Id}}">{{.Titre}}</a></h2>
+            <p class="thread-excerpt">{{.Contenu}}</p>
+            <div class="thread-tags">
+                {{range .Tags}}<a class="tag" href="/?tag={{.Id}}">{{.Nom}}</a>{{end}}
+            </div>
+        </div>
+        <div class="thread-card-meta">
+            <span class="state state-{{.Etat}}">{{.Etat}}</span>
+            <span>par {{.AuthorName}}</span>
+            <span>{{.MessageCount}} message(s)</span>
+            <span class="date">{{.CreatedAt}}</span>
+        </div>
+    </article>
+    {{else}}
+    <p class="empty">Aucun sujet pour le moment. Soyez le premier à lancer une discussion !</p>
+    {{end}}
+</div>
+
+{{$p := .Pagination}}
+{{if gt $p.TotalPages 1}}
+<nav class="pagination">
+    {{if $p.HasPrev}}<a href="/?page={{$p.PrevPage}}&size={{$.SizeParam}}{{if $.ActiveTagId}}&tag={{$.ActiveTagId}}{{end}}{{if $.Search}}&q={{$.Search}}{{end}}">‹ Précédent</a>{{end}}
+    {{range $p.Pages}}
+        <a class="{{if eq . $p.Page}}active{{end}}" href="/?page={{.}}&size={{$.SizeParam}}{{if $.ActiveTagId}}&tag={{$.ActiveTagId}}{{end}}{{if $.Search}}&q={{$.Search}}{{end}}">{{.}}</a>
+    {{end}}
+    {{if $p.HasNext}}<a href="/?page={{$p.NextPage}}&size={{$.SizeParam}}{{if $.ActiveTagId}}&tag={{$.ActiveTagId}}{{end}}{{if $.Search}}&q={{$.Search}}{{end}}">Suivant ›</a>{{end}}
+</nav>
+{{end}}
+{{end}}

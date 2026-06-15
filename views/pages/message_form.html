@@ -1,0 +1,16 @@
+{{define "title"}}Modifier le message — CinéTalk{{end}}
+{{define "content"}}
+<div class="form-card">
+    <h1>Modifier votre message</h1>
+    <form method="POST" action="/messages/{{.Message.Id}}/edit">
+        <label>
+            Message
+            <textarea name="contenu" rows="5" required>{{.Message.Contenu}}</textarea>
+        </label>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-accent">Enregistrer</button>
+            <a class="btn" href="/threads/{{.Message.ThreadId}}">Annuler</a>
+        </div>
+    </form>
+</div>
+{{end}}

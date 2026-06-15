@@ -1,0 +1,77 @@
+{{define "title"}}Administration — CinéTalk{{end}}
+{{define "content"}}
+<h1>Tableau de bord d'administration</h1>
+
+<div class="stats">
+    <div class="stat-card"><span class="stat-value">{{.NbUsers}}</span><span class="stat-label">Utilisateurs</span></div>
+    <div class="stat-card"><span class="stat-value">{{.NbThreads}}</span><span class="stat-label">Fils de discussion</span></div>
+</div>
+
+<section class="admin-section">
+    <h2>Utilisateurs</h2>
+    <table class="admin-table">
+        <thead>
+            <tr><th>ID</th><th>Nom</th><th>E-mail</th><th>Rôle</th><th>Statut</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            {{range .Users}}
+            <tr>
+                <td>{{.Id}}</td>
+                <td>{{.Username}}</td>
+                <td>{{.Email}}</td>
+                <td>{{.Role}}</td>
+                <td>{{if .Banned}}<span class="badge badge-danger">Banni</span>{{else}}<span class="badge badge-ok">Actif</span>{{end}}</td>
+                <td>
+                    {{if not .IsAdmin}}
+                        {{if .Banned}}
+                        <form action="/admin/users/{{.Id}}/unban" method="POST" class="inline-form">
+                            <button type="submit" class="btn btn-sm">Réactiver</button>
+                        </form>
+                        {{else}}
+                        <form action="/admin/users/{{.Id}}/ban" method="POST" class="inline-form" onsubmit="return confirm('Bannir cet utilisateur ?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Bannir</button>
+                        </form>
+                        {{end}}
+                    {{else}}
+                        <span class="muted">—</span>
+                    {{end}}
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</section>
+
+<section class="admin-section">
+    <h2>Fils de discussion</h2>
+    <table class="admin-table">
+        <thead>
+            <tr><th>ID</th><th>Titre</th><th>Auteur</th><th>État</th><th>Messages</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+            {{range .Threads}}
+            <tr>
+                <td>{{.Id}}</td>
+                <td><a href="/threads/{{.Id}}">{{.Titre}}</a></td>
+                <td>{{.AuthorName}}</td>
+                <td>
+                    <form action="/threads/{{.Id}}/state" method="POST" class="inline-form">
+                        <select name="etat" onchange="this.form.submit()">
+                            <option value="ouvert" {{if eq .Etat "ouvert"}}selected{{end}}>Ouvert</option>
+                            <option value="ferme" {{if eq .Etat "ferme"}}selected{{end}}>Fermé</option>
+                            <option value="archive" {{if eq .Etat "archive"}}selected{{end}}>Archivé</option>
+                        </select>
+                    </form>
+                </td>
+                <td>{{.MessageCount}}</td>
+                <td>
+                    <form action="/threads/{{.Id}}/delete" method="POST" class="inline-form" onsubmit="return confirm('Supprimer ce fil ?');">
+                        <button type="submit" class="btn btn-sm btn-danger">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</section>
+{{end}}

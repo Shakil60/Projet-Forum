@@ -1,0 +1,27 @@
+{{define "title"}}Inscription — CinéTalk{{end}}
+{{define "content"}}
+<div class="form-card narrow">
+    <h1>Créer un compte</h1>
+
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+
+    <form method="POST" action="/register">
+        <label>
+            Nom d'utilisateur
+            <input type="text" name="nom_utilisateur" value="{{.Username}}" required autofocus>
+        </label>
+        <label>
+            Adresse e-mail
+            <input type="email" name="email" value="{{.Email}}" required>
+        </label>
+        <label>
+            Mot de passe
+            <input type="password" name="mot_de_passe" required>
+        </label>
+        <p class="hint">12 caractères minimum, dont au moins une majuscule et un caractère spécial.</p>
+        <button type="submit" class="btn btn-accent btn-block">S'inscrire</button>
+    </form>
+
+    <p class="form-switch">Déjà inscrit ? <a href="/login">Connectez-vous</a></p>
+</div>
+{{end}}

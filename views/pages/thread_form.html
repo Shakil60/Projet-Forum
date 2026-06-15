@@ -1,0 +1,41 @@
+{{define "title"}}{{if .IsEdit}}Modifier le sujet{{else}}Nouveau sujet{{end}} — CinéTalk{{end}}
+{{define "content"}}
+<div class="form-card">
+    <h1>{{if .IsEdit}}Modifier le sujet{{else}}Lancer une nouvelle discussion{{end}}</h1>
+
+    {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+
+    <form method="POST" action="{{if .IsEdit}}/threads/{{.ThreadId}}/edit{{else}}/threads{{end}}">
+        <label>
+            Titre
+            <input type="text" name="titre" value="{{.Titre}}" maxlength="100" required placeholder="Ex : Que pensez-vous de la fin d'Inception ?">
+        </label>
+
+        <label>
+            Contenu
+            <textarea name="contenu" rows="6" required placeholder="Développez votre sujet...">{{.Contenu}}</textarea>
+        </label>
+
+        <fieldset class="tags-fieldset">
+            <legend>Genres / catégories</legend>
+            <div class="tags-checkboxes">
+                {{range .Tags}}
+                <label class="checkbox">
+                    <input type="checkbox" name="tags" value="{{.Id}}" {{if index $.SelectedTags .Id}}checked{{end}}>
+                    {{.Nom}}
+                </label>
+                {{end}}
+            </div>
+            <label>
+                Nouveaux genres (séparés par des virgules)
+                <input type="text" name="nouveaux_tags" placeholder="Thriller, Science-fiction">
+            </label>
+        </fieldset>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-accent">{{if .IsEdit}}Enregistrer{{else}}Publier le sujet{{end}}</button>
+            <a class="btn" href="/">Annuler</a>
+        </div>
+    </form>
+</div>
+{{end}}

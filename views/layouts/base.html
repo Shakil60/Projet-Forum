@@ -1,0 +1,40 @@
+{{define "base"}}<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{block "title" .}}CinéTalk{{end}}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header class="navbar">
+    <div class="nav-inner">
+        <a class="brand" href="/">🎬 CinéTalk</a>
+        <nav class="nav-links">
+            <a href="/">Accueil</a>
+            {{if .CurrentUser}}
+                <a href="/threads/new">Nouveau sujet</a>
+                {{if .CurrentUser.IsAdmin}}<a href="/admin">Administration</a>{{end}}
+                <span class="nav-user">{{.CurrentUser.Username}}</span>
+                <form action="/logout" method="POST" class="inline-form">
+                    <button type="submit" class="link-btn">Déconnexion</button>
+                </form>
+            {{else}}
+                <a href="/login">Connexion</a>
+                <a href="/register" class="btn btn-accent btn-sm">Inscription</a>
+            {{end}}
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    {{template "content" .}}
+</main>
+
+<footer class="footer">
+    <p>CinéTalk — La communauté des passionnés de cinéma et de séries</p>
+</footer>
+
+<script src="/static/js/app.js"></script>
+</body>
+</html>{{end}}

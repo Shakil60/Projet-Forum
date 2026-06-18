@@ -12,14 +12,26 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
 const tmdbBaseURL = "https://api.themoviedb.org/3"
 
+// Duree de vie d'une reponse gardee en cache memoire.
+const tmdbCacheTTL = 10 * time.Minute
+
+// Une reponse TMDB mise en cache avec sa date d'expiration.
+type cacheEntry struct {
+	body    []byte
+	expires time.Time
+}
+
 type TMDBService struct {
 	apiKey     string
 	httpClient *http.Client
+	cache      map[string]cacheEntry
+	cacheMutex sync.RWMutex
 }
 
 func InitTMDBService(apiKey string) *TMDBService {
@@ -28,6 +40,7 @@ func InitTMDBService(apiKey string) *TMDBService {
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
+		cache: map[string]cacheEntry{},
 	}
 }
 
@@ -57,6 +70,11 @@ func (s *TMDBService) request(path string, params url.Values) ([]byte, error) {
 
 	requestURL := fmt.Sprintf("%s%s?%s", tmdbBaseURL, path, params.Encode())
 
+	// On renvoie la reponse mise en cache si elle n'est pas expiree.
+	if cached, ok := s.getFromCache(requestURL); ok {
+		return cached, nil
+	}
+
 	response, err := s.httpClient.Get(requestURL)
 	if err != nil {
 		return nil, fmt.Errorf("erreur reseau TMDB : %w", err)
@@ -72,7 +90,29 @@ func (s *TMDBService) request(path string, params url.Values) ([]byte, error) {
 		return nil, fmt.Errorf("erreur TMDB (%d) : %s", response.StatusCode, string(body))
 	}
 
+	// On garde la reponse en cache pour eviter de rappeler l'API trop souvent.
+	s.saveToCache(requestURL, body)
 	return body, nil
+}
+
+// Cherche une reponse encore valide dans le cache memoire.
+func (s *TMDBService) getFromCache(key string) ([]byte, bool) {
+	s.cacheMutex.RLock()
+	defer s.cacheMutex.RUnlock()
+
+	entry, ok := s.cache[key]
+	if !ok || time.Now().After(entry.expires) {
+		return nil, false
+	}
+	return entry.body, true
+}
+
+// Enregistre une reponse dans le cache avec sa date d'expiration.
+func (s *TMDBService) saveToCache(key string, body []byte) {
+	s.cacheMutex.Lock()
+	defer s.cacheMutex.Unlock()
+
+	s.cache[key] = cacheEntry{body: body, expires: time.Now().Add(tmdbCacheTTL)}
 }
 
 // Decode le JSON renvoye par TMDB dans la structure cible (fonction generique).

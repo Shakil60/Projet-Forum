@@ -1,4 +1,5 @@
 USE cinetalk;
+SET NAMES utf8mb4;
 
 INSERT INTO utilisateurs (nom_utilisateur, email, mot_de_passe, sel, role) VALUES
 ('admin', 'admin@cinetalk.fr', '271b169f31cafd3fb292c0a84b57a6f6b71eb3faba5254e1616db66dbf086c2bf898434a8717ad201ca62aaea5cf818de1493973a4683db6da2d0b48e649dd33', 'a1b2c3d4e5f6a7b8', 'administrateur'),

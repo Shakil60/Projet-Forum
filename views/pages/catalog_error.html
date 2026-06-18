@@ -1,0 +1,13 @@
+{{define "title"}}Erreur catalogue — CinéTalk{{end}}
+{{define "content"}}
+<section class="hero catalog-hero">
+    <h1>Erreur du catalogue</h1>
+    <p>Impossible de récupérer les données depuis TMDB.</p>
+</section>
+
+<div class="alert alert-error">
+    <p>{{.Error}}</p>
+</div>
+
+<p><a href="/catalog">← Retour au catalogue</a></p>
+{{end}}

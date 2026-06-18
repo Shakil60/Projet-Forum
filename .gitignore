@@ -12,3 +12,6 @@
 *.swp
 Thumbs.db
 .DS_Store
+
+# Donnees runtime MCP / local
+data/

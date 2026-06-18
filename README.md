@@ -23,6 +23,7 @@ organiser les contenus par genres.
 - Pagination configurable (10, 20, 30 ou tous les éléments)
 - Association des fils à un ou plusieurs genres / catégories et filtrage par genre
 - Recherche de fils par titre ou par genre (réservée aux membres connectés)
+- **Catalogue TMDB** : films, séries, acteurs et réalisateurs via l'API The Movie Database
 - Tableau de bord d'administration : modération des fils, suppression de contenus,
   changement d'état et bannissement de comptes
 
@@ -98,7 +99,11 @@ forum/
    DB_PORT=3306
    JWT_SECRET=une_cle_secrete_longue
    SERVER_PORT=8080
+   TMDB_API_KEY=votre_cle_api_tmdb
    ```
+
+   Pour obtenir une clé TMDB : créez un compte sur [themoviedb.org](https://www.themoviedb.org/),
+   puis demandez une clé API (type Developer) dans Paramètres → API.
 
 4. **Installer les dépendances**
 
@@ -115,6 +120,7 @@ forum/
 6. **Ouvrir le forum**
 
    Rendez-vous sur [http://localhost:8080](http://localhost:8080).
+   Le catalogue cinéma est accessible sur [http://localhost:8080/catalog](http://localhost:8080/catalog).
 
 ## Comptes de test
 

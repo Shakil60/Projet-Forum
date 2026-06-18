@@ -15,6 +15,42 @@ type Renderer struct {
 var funcMap = template.FuncMap{
 	"add": func(a, b int) int { return a + b },
 	"sub": func(a, b int) int { return a - b },
+	"tmdbPoster": func(path string) string {
+		if path == "" {
+			return "/static/img/no-poster.svg"
+		}
+		return "https://image.tmdb.org/t/p/w500" + path
+	},
+	"tmdbProfile": func(path string) string {
+		if path == "" {
+			return "/static/img/no-profile.svg"
+		}
+		return "https://image.tmdb.org/t/p/w300" + path
+	},
+	"tmdbBackdrop": func(path string) string {
+		if path == "" {
+			return ""
+		}
+		return "https://image.tmdb.org/t/p/w780" + path
+	},
+	"truncate": func(text string, max int) string {
+		if len(text) <= max {
+			return text
+		}
+		return text[:max] + "..."
+	},
+	"mediaTitle": func(title, name string) string {
+		if title != "" {
+			return title
+		}
+		return name
+	},
+	"mediaDate": func(releaseDate, firstAirDate string) string {
+		if releaseDate != "" {
+			return releaseDate
+		}
+		return firstAirDate
+	},
 }
 
 func InitRenderer(dir string) *Renderer {

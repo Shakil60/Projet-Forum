@@ -1,0 +1,77 @@
+{{define "title"}}Catalogue — CinéTalk{{end}}
+{{define "content"}}
+<section class="hero catalog-hero">
+    {{if eq .ListType "movies"}}
+        <h1>Films</h1>
+        <p>Parcourez les films populaires ou lancez une recherche.</p>
+    {{else if eq .ListType "series"}}
+        <h1>Séries</h1>
+        <p>Parcourez les séries populaires ou lancez une recherche.</p>
+    {{else}}
+        <h1>Acteurs & réalisateurs</h1>
+        <p>Découvrez les personnalités du cinéma et de la télévision.</p>
+    {{end}}
+</section>
+
+<form class="search-bar catalog-search" action="/catalog/{{.ListType}}" method="GET">
+    <input type="text" name="q" value="{{.Search}}" placeholder="Rechercher...">
+    <button type="submit" class="btn btn-accent">Rechercher</button>
+</form>
+
+<nav class="catalog-nav">
+    <a href="/catalog">Accueil catalogue</a>
+    <a href="/catalog/movies" {{if eq .ListType "movies"}}class="active"{{end}}>Films</a>
+    <a href="/catalog/series" {{if eq .ListType "series"}}class="active"{{end}}>Séries</a>
+    <a href="/catalog/people" {{if eq .ListType "people"}}class="active"{{end}}>Personnes</a>
+</nav>
+
+{{if .Search}}<p class="filter-info">{{.Total}} résultat(s) pour : <strong>{{.Search}}</strong></p>{{end}}
+
+<div class="media-grid">
+    {{range .Items}}
+        {{if eq $.ListType "people"}}
+        <a class="media-card media-card-person" href="/catalog/people/{{.ID}}">
+            <img src="{{tmdbProfile .ProfilePath}}" alt="{{.Name}}" loading="lazy">
+            <div class="media-card-body">
+                <h3>{{.Name}}</h3>
+                <p class="media-meta">{{.KnownForDepartment}}</p>
+            </div>
+        </a>
+        {{else if eq $.ListType "movies"}}
+        <a class="media-card" href="/catalog/movies/{{.ID}}">
+            <img src="{{tmdbPoster .PosterPath}}" alt="{{.Title}}" loading="lazy">
+            <div class="media-card-body">
+                <h3>{{.Title}}</h3>
+                <p class="media-meta">{{.ReleaseDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-excerpt">{{truncate .Overview 90}}</p>
+            </div>
+        </a>
+        {{else}}
+        <a class="media-card" href="/catalog/series/{{.ID}}">
+            <img src="{{tmdbPoster .PosterPath}}" alt="{{.Name}}" loading="lazy">
+            <div class="media-card-body">
+                <h3>{{.Name}}</h3>
+                <p class="media-meta">{{.FirstAirDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-excerpt">{{truncate .Overview 90}}</p>
+            </div>
+        </a>
+        {{end}}
+    {{else}}
+    <p class="empty">Aucun résultat trouvé.</p>
+    {{end}}
+</div>
+
+{{if or (gt .Page 1) .HasMore}}
+<nav class="pagination">
+    {{if gt .Page 1}}
+        <a href="/catalog/{{.ListType}}?page={{sub .Page 1}}{{if .Search}}&q={{.Search}}{{end}}">‹ Précédent</a>
+    {{end}}
+    <span class="active">Page {{.Page}}</span>
+    {{if .HasMore}}
+        <a href="/catalog/{{.ListType}}?page={{add .Page 1}}{{if .Search}}&q={{.Search}}{{end}}">Suivant ›</a>
+    {{end}}
+</nav>
+{{end}}
+
+<p class="catalog-credit">Données fournies par <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a></p>
+{{end}}

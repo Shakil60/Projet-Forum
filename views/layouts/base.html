@@ -12,6 +12,7 @@
         <a class="brand" href="/">🎬 CinéTalk</a>
         <nav class="nav-links">
             <a href="/">Accueil</a>
+            <a href="/catalog">Catalogue</a>
             {{if .CurrentUser}}
                 <a href="/threads/new">Nouveau sujet</a>
                 {{if .CurrentUser.IsAdmin}}<a href="/admin">Administration</a>{{end}}

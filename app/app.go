@@ -41,12 +41,14 @@ func InitApp() *App {
 	messageService := services.InitMessageService(messageRepository, threadRepository)
 	reactionService := services.InitReactionService(reactionRepository, messageRepository)
 	adminService := services.InitAdminService(userRepository)
+	tmdbService := services.InitTMDBService(config.GetEnvWithDefault("TMDB_API_KEY", ""))
 
 	authController := controllers.InitAuthController(authService, renderer)
 	threadController := controllers.InitThreadController(threadService, messageService, tagService, renderer)
 	messageController := controllers.InitMessageController(messageService, renderer)
 	reactionController := controllers.InitReactionController(reactionService)
 	adminController := controllers.InitAdminController(adminService, threadService, renderer)
+	catalogController := controllers.InitCatalogController(tmdbService, renderer)
 
 	mw := middleware.InitMiddleware(userRepository)
 
@@ -57,6 +59,7 @@ func InitApp() *App {
 	routers.RegisterMessageRoutes(router, messageController, mw)
 	routers.RegisterReactionRoutes(router, reactionController, mw)
 	routers.RegisterAdminRoutes(router, adminController, mw)
+	routers.RegisterCatalogRoutes(router, catalogController, mw)
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 

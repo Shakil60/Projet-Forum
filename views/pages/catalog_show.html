@@ -1,0 +1,61 @@
+{{define "title"}}{{.Show.Name}} — CinéTalk{{end}}
+{{define "content"}}
+<nav class="breadcrumb">
+    <a href="/catalog">Catalogue</a> › <a href="/catalog/series">Séries</a> › {{.Show.Name}}
+</nav>
+
+<article class="media-detail">
+    {{if .Show.BackdropPath}}
+    <div class="media-backdrop" style="background-image: url('{{tmdbBackdrop .Show.BackdropPath}}')"></div>
+    {{end}}
+
+    <div class="media-detail-main">
+        <img class="media-poster" src="{{tmdbPoster .Show.PosterPath}}" alt="{{.Show.Name}}">
+        <div class="media-detail-info">
+            <h1>{{.Show.Name}}</h1>
+            <p class="media-meta">
+                {{if .Show.FirstAirDate}}{{.Show.FirstAirDate}}{{end}}
+                {{if .Show.LastAirDate}} — {{.Show.LastAirDate}}{{end}}
+                · {{.Show.NumberOfSeasons}} saison(s), {{.Show.NumberOfEpisodes}} épisode(s)
+                · ★ {{printf "%.1f" .Show.VoteAverage}}
+                · {{.Show.Status}}
+            </p>
+            <div class="thread-tags">
+                {{range .Show.Genres}}<span class="tag">{{.Name}}</span>{{end}}
+            </div>
+            <p class="media-overview">{{.Show.Overview}}</p>
+        </div>
+    </div>
+</article>
+
+{{if .Directors}}
+<section class="catalog-section">
+    <h2>Réalisation</h2>
+    <div class="people-row">
+        {{range .Directors}}
+        <a class="person-chip" href="/catalog/people/{{.ID}}">
+            <img src="{{tmdbProfile .ProfilePath}}" alt="{{.Name}}" loading="lazy">
+            <span>{{.Name}}</span>
+        </a>
+        {{end}}
+    </div>
+</section>
+{{end}}
+
+{{if .Cast}}
+<section class="catalog-section">
+    <h2>Distribution</h2>
+    <div class="people-row">
+        {{range .Cast}}
+        <a class="person-chip" href="/catalog/people/{{.ID}}">
+            <img src="{{tmdbProfile .ProfilePath}}" alt="{{.Name}}" loading="lazy">
+            <span>{{.Name}}</span>
+            <small>{{.Character}}</small>
+        </a>
+        {{end}}
+    </div>
+</section>
+{{end}}
+
+<p class="catalog-credit">Données fournies par <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a></p>
+{{end}}

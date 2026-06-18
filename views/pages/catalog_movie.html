@@ -1,0 +1,60 @@
+{{define "title"}}{{.Movie.Title}} — CinéTalk{{end}}
+{{define "content"}}
+<nav class="breadcrumb">
+    <a href="/catalog">Catalogue</a> › <a href="/catalog/movies">Films</a> › {{.Movie.Title}}
+</nav>
+
+<article class="media-detail">
+    {{if .Movie.BackdropPath}}
+    <div class="media-backdrop" style="background-image: url('{{tmdbBackdrop .Movie.BackdropPath}}')"></div>
+    {{end}}
+
+    <div class="media-detail-main">
+        <img class="media-poster" src="{{tmdbPoster .Movie.PosterPath}}" alt="{{.Movie.Title}}">
+        <div class="media-detail-info">
+            <h1>{{.Movie.Title}}</h1>
+            <p class="media-meta">
+                {{if .Movie.ReleaseDate}}{{.Movie.ReleaseDate}}{{end}}
+                {{if .Movie.Runtime}} · {{.Movie.Runtime}} min{{end}}
+                · ★ {{printf "%.1f" .Movie.VoteAverage}}
+                · {{.Movie.Status}}
+            </p>
+            <div class="thread-tags">
+                {{range .Movie.Genres}}<span class="tag">{{.Name}}</span>{{end}}
+            </div>
+            <p class="media-overview">{{.Movie.Overview}}</p>
+        </div>
+    </div>
+</article>
+
+{{if .Directors}}
+<section class="catalog-section">
+    <h2>Réalisation</h2>
+    <div class="people-row">
+        {{range .Directors}}
+        <a class="person-chip" href="/catalog/people/{{.ID}}">
+            <img src="{{tmdbProfile .ProfilePath}}" alt="{{.Name}}" loading="lazy">
+            <span>{{.Name}}</span>
+        </a>
+        {{end}}
+    </div>
+</section>
+{{end}}
+
+{{if .Cast}}
+<section class="catalog-section">
+    <h2>Distribution</h2>
+    <div class="people-row">
+        {{range .Cast}}
+        <a class="person-chip" href="/catalog/people/{{.ID}}">
+            <img src="{{tmdbProfile .ProfilePath}}" alt="{{.Name}}" loading="lazy">
+            <span>{{.Name}}</span>
+            <small>{{.Character}}</small>
+        </a>
+        {{end}}
+    </div>
+</section>
+{{end}}
+
+<p class="catalog-credit">Données fournies par <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a></p>
+{{end}}

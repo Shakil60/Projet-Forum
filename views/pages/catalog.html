@@ -1,0 +1,58 @@
+{{define "title"}}Catalogue — CinéTalk{{end}}
+{{define "content"}}
+<section class="hero catalog-hero">
+    <h1>Catalogue cinéma & séries</h1>
+    <p>Explorez les films, séries, acteurs et réalisateurs via The Movie Database (TMDB).</p>
+</section>
+
+<form class="search-bar catalog-search" action="/catalog/search" method="GET">
+    <input type="text" name="q" value="{{.Search}}" placeholder="Rechercher un film, une série, un acteur ou un réalisateur...">
+    <button type="submit" class="btn btn-accent">Rechercher</button>
+</form>
+
+<nav class="catalog-nav">
+    <a href="/catalog/movies" class="btn">Tous les films</a>
+    <a href="/catalog/series" class="btn">Toutes les séries</a>
+    <a href="/catalog/people" class="btn">Acteurs & réalisateurs</a>
+</nav>
+
+<section class="catalog-section">
+    <div class="catalog-section-header">
+        <h2>Films populaires</h2>
+        <a href="/catalog/movies">Voir tout →</a>
+    </div>
+    <div class="media-grid">
+        {{range .Movies}}
+        <a class="media-card" href="/catalog/movies/{{.ID}}">
+            <img src="{{tmdbPoster .PosterPath}}" alt="{{.Title}}" loading="lazy">
+            <div class="media-card-body">
+                <h3>{{.Title}}</h3>
+                <p class="media-meta">{{.ReleaseDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-excerpt">{{truncate .Overview 100}}</p>
+            </div>
+        </a>
+        {{end}}
+    </div>
+</section>
+
+<section class="catalog-section">
+    <div class="catalog-section-header">
+        <h2>Séries populaires</h2>
+        <a href="/catalog/series">Voir tout →</a>
+    </div>
+    <div class="media-grid">
+        {{range .Series}}
+        <a class="media-card" href="/catalog/series/{{.ID}}">
+            <img src="{{tmdbPoster .PosterPath}}" alt="{{.Name}}" loading="lazy">
+            <div class="media-card-body">
+                <h3>{{.Name}}</h3>
+                <p class="media-meta">{{.FirstAirDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-excerpt">{{truncate .Overview 100}}</p>
+            </div>
+        </a>
+        {{end}}
+    </div>
+</section>
+
+<p class="catalog-credit">Données fournies par <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a></p>
+{{end}}

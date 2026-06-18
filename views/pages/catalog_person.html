@@ -1,0 +1,28 @@
+{{define "title"}}{{.Person.Name}} — CinéTalk{{end}}
+{{define "content"}}
+<nav class="breadcrumb">
+    <a href="/catalog">Catalogue</a> › <a href="/catalog/people">Personnes</a> › {{.Person.Name}}
+</nav>
+
+<article class="media-detail person-detail">
+    <div class="media-detail-main">
+        <img class="media-poster person-poster" src="{{tmdbProfile .Person.ProfilePath}}" alt="{{.Person.Name}}">
+        <div class="media-detail-info">
+            <h1>{{.Person.Name}}</h1>
+            <p class="media-meta">
+                {{.Person.KnownForDepartment}}
+                {{if .Person.Birthday}} · Né(e) le {{.Person.Birthday}}{{end}}
+                {{if .Person.PlaceOfBirth}} à {{.Person.PlaceOfBirth}}{{end}}
+                {{if .Person.Deathday}} · Décédé(e) le {{.Person.Deathday}}{{end}}
+            </p>
+            {{if .Person.Biography}}
+            <p class="media-overview">{{.Person.Biography}}</p>
+            {{else}}
+            <p class="muted">Aucune biographie disponible.</p>
+            {{end}}
+        </div>
+    </div>
+</article>
+
+<p class="catalog-credit">Données fournies par <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a></p>
+{{end}}

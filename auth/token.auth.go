@@ -1,5 +1,7 @@
 package auth
 
+// Creation des jetons JWT pour authentifier les utilisateurs.
+
 import (
 	"strconv"
 	"time"
@@ -9,6 +11,7 @@ import (
 
 var jwtSecret []byte
 
+// Definit la cle secrete utilisee pour signer les jetons.
 func SetSecret(secret string) {
 	jwtSecret = []byte(secret)
 }
@@ -20,6 +23,7 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
+// Cree un jeton JWT signe valable 24h pour l'utilisateur donne.
 func GenerateToken(userID int, username string, role string) (string, error) {
 	now := time.Now()
 

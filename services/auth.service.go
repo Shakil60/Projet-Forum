@@ -1,5 +1,7 @@
 package services
 
+// Logique metier d'authentification : inscription et connexion des utilisateurs.
+
 import (
 	"errors"
 	"forum/auth"
@@ -16,6 +18,7 @@ func InitAuthService(userRepository *repositories.UserRepository) *AuthService {
 	return &AuthService{userRepository: userRepository}
 }
 
+// Valide les champs, verifie l'unicite puis cree un nouvel utilisateur avec mot de passe hache.
 func (s *AuthService) Register(username string, email string, password string) (models.User, error) {
 	username = strings.TrimSpace(username)
 	email = strings.TrimSpace(email)
@@ -68,6 +71,7 @@ func (s *AuthService) Register(username string, email string, password string) (
 	return user, nil
 }
 
+// Verifie les identifiants et renvoie un jeton si la connexion est valide.
 func (s *AuthService) Login(identifiant string, password string) (string, models.User, error) {
 	identifiant = strings.TrimSpace(identifiant)
 	if identifiant == "" || password == "" {

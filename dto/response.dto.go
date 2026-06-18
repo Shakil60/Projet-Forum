@@ -1,5 +1,7 @@
 package dto
 
+// Definit les reponses JSON renvoyees par l'API.
+
 type ResponseDto struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`

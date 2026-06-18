@@ -1,5 +1,7 @@
 package app
 
+// Assemble toutes les dependances de l'application (BDD, services, controllers, routes).
+
 import (
 	"database/sql"
 	"net/http"
@@ -22,6 +24,7 @@ type App struct {
 	Port   string
 }
 
+// Charge la config, instancie repositories/services/controllers et enregistre les routes.
 func InitApp() *App {
 	config.LoadEnv()
 	auth.SetSecret(config.GetEnvWithDefault("JWT_SECRET", "cinetalk_dev_secret_change_me"))
@@ -70,6 +73,7 @@ func InitApp() *App {
 	}
 }
 
+// Ferme proprement la connexion a la base de donnees.
 func (a *App) Close() {
 	if a.Db != nil {
 		a.Db.Close()

@@ -1,5 +1,7 @@
 package repositories
 
+// Acces a la base de donnees pour les messages.
+
 import (
 	"database/sql"
 	"forum/models"
@@ -14,6 +16,7 @@ func InitMessageRepository(db *sql.DB) *MessageRepository {
 	return &MessageRepository{db}
 }
 
+// Insere un nouveau message et renvoie son identifiant.
 func (r *MessageRepository) Create(message models.Message) (int, error) {
 	query := "INSERT INTO `messages`(`fil_id`, `utilisateur_id`, `contenu`) VALUES (?,?,?);"
 
@@ -30,6 +33,7 @@ func (r *MessageRepository) Create(message models.Message) (int, error) {
 	return int(id), nil
 }
 
+// Renvoie la clause SQL de tri selon le critere choisi.
 func orderClause(sort string) string {
 	switch sort {
 	case "ancien":
@@ -50,6 +54,7 @@ func (r *MessageRepository) CountByThread(threadId int) (int, error) {
 	return count, nil
 }
 
+// Recupere les messages d'un fil avec leurs compteurs de reactions et la reaction de l'utilisateur courant.
 func (r *MessageRepository) ReadByThread(threadId int, sort string, currentUserId int, limit int, offset int) ([]models.Message, error) {
 	query := "SELECT m.`id`, m.`fil_id`, m.`utilisateur_id`, u.`nom_utilisateur`, m.`contenu`, m.`date_envoi`, " +
 		"COALESCE(SUM(CASE WHEN r.`type` = 'like' THEN 1 ELSE 0 END), 0) AS likes, " +
@@ -92,6 +97,7 @@ func (r *MessageRepository) ReadByThread(threadId int, sort string, currentUserI
 	return messages, nil
 }
 
+// Recupere un message par son identifiant.
 func (r *MessageRepository) ReadById(id int) (models.Message, error) {
 	var message models.Message
 	query := "SELECT m.`id`, m.`fil_id`, m.`utilisateur_id`, u.`nom_utilisateur`, m.`contenu`, m.`date_envoi` " +
@@ -111,6 +117,7 @@ func (r *MessageRepository) ReadById(id int) (models.Message, error) {
 	return message, nil
 }
 
+// Modifie le contenu d'un message.
 func (r *MessageRepository) Update(id int, contenu string) error {
 	result, err := r.db.Exec("UPDATE `messages` SET `contenu` = ? WHERE `id` = ?;", contenu, id)
 	if err != nil {
@@ -122,6 +129,7 @@ func (r *MessageRepository) Update(id int, contenu string) error {
 	return nil
 }
 
+// Supprime un message.
 func (r *MessageRepository) Delete(id int) error {
 	result, err := r.db.Exec("DELETE FROM `messages` WHERE `id` = ?;", id)
 	if err != nil {

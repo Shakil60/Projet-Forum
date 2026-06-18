@@ -1,5 +1,7 @@
 package main
 
+// Point d'entree du programme : initialise l'application et lance le serveur HTTP.
+
 import (
 	"forum/app"
 	"log"

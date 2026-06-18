@@ -1,5 +1,7 @@
 package controllers
 
+// Gere l'inscription, la connexion et la deconnexion des utilisateurs.
+
 import (
 	"forum/helper"
 	"forum/services"
@@ -15,10 +17,12 @@ func InitAuthController(authService *services.AuthService, renderer *helper.Rend
 	return &AuthController{authService: authService, renderer: renderer}
 }
 
+// Affiche le formulaire d'inscription.
 func (c *AuthController) RegisterForm(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "register.html", baseData(r))
 }
 
+// Cree un compte puis connecte directement le nouvel utilisateur.
 func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		c.renderer.Render(w, http.StatusBadRequest, "register.html", baseData(r))
@@ -49,10 +53,12 @@ func (c *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+// Affiche le formulaire de connexion.
 func (c *AuthController) LoginForm(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "login.html", baseData(r))
 }
 
+// Verifie les identifiants et depose le cookie d'authentification.
 func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		c.renderer.Render(w, http.StatusBadRequest, "login.html", baseData(r))
@@ -75,6 +81,7 @@ func (c *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+// Supprime le cookie de session et deconnecte l'utilisateur.
 func (c *AuthController) Logout(w http.ResponseWriter, r *http.Request) {
 	clearAuthCookie(w)
 	http.Redirect(w, r, "/", http.StatusSeeOther)

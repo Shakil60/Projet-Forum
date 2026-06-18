@@ -1,5 +1,7 @@
 package routers
 
+// Declare les routes liees aux fils de discussion.
+
 import (
 	"forum/controllers"
 	"forum/middleware"
@@ -8,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Enregistre les routes des fils sur le routeur.
 func RegisterThreadRoutes(r *mux.Router, c *controllers.ThreadController, mw *middleware.Middleware) {
 	r.Handle("/", mw.Optional(http.HandlerFunc(c.Home))).Methods("GET")
 

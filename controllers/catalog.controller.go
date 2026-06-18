@@ -1,5 +1,7 @@
 package controllers
 
+// Gere les pages du catalogue (films, series, personnes) via l'API TMDB.
+
 import (
 	"forum/helper"
 	"forum/services"
@@ -22,12 +24,14 @@ func InitCatalogController(tmdbService *services.TMDBService, renderer *helper.R
 	}
 }
 
+// Affiche une page d'erreur quand la cle TMDB n'est pas configuree.
 func (c *CatalogController) renderConfigError(w http.ResponseWriter, r *http.Request) {
 	data := baseData(r)
 	data["Error"] = c.tmdbService.ConfigError().Error()
 	c.renderer.Render(w, http.StatusServiceUnavailable, "catalog_config.html", data)
 }
 
+// Affiche l'accueil du catalogue avec les films et series populaires.
 func (c *CatalogController) Home(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -56,6 +60,7 @@ func (c *CatalogController) Home(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog.html", data)
 }
 
+// Liste les films populaires ou les resultats de recherche.
 func (c *CatalogController) Movies(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -101,6 +106,7 @@ func (c *CatalogController) Movies(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog_list.html", data)
 }
 
+// Liste les series populaires ou les resultats de recherche.
 func (c *CatalogController) Series(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -146,6 +152,7 @@ func (c *CatalogController) Series(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog_list.html", data)
 }
 
+// Liste les personnes populaires ou les resultats de recherche.
 func (c *CatalogController) People(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -191,6 +198,7 @@ func (c *CatalogController) People(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog_list.html", data)
 }
 
+// Recherche globale sur les films, series et personnes.
 func (c *CatalogController) Search(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -216,6 +224,7 @@ func (c *CatalogController) Search(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog_search.html", data)
 }
 
+// Affiche la fiche detaillee d'un film avec son casting.
 func (c *CatalogController) ShowMovie(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -247,6 +256,7 @@ func (c *CatalogController) ShowMovie(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog_movie.html", data)
 }
 
+// Affiche la fiche detaillee d'une serie avec son casting.
 func (c *CatalogController) ShowSeries(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -278,6 +288,7 @@ func (c *CatalogController) ShowSeries(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog_show.html", data)
 }
 
+// Affiche la fiche detaillee d'une personne.
 func (c *CatalogController) ShowPerson(w http.ResponseWriter, r *http.Request) {
 	if !c.tmdbService.IsConfigured() {
 		c.renderConfigError(w, r)
@@ -301,6 +312,7 @@ func (c *CatalogController) ShowPerson(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "catalog_person.html", data)
 }
 
+// Affiche une page d'erreur en cas de probleme avec l'API TMDB.
 func (c *CatalogController) renderError(w http.ResponseWriter, r *http.Request, err error) {
 	data := baseData(r)
 	data["Error"] = err.Error()

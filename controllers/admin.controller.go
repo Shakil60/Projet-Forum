@@ -1,5 +1,7 @@
 package controllers
 
+// Gere les actions reservees a l'administration (tableau de bord et bannissements).
+
 import (
 	"forum/helper"
 	"forum/middleware"
@@ -24,6 +26,7 @@ func InitAdminController(adminService *services.AdminService, threadService *ser
 	}
 }
 
+// Affiche le tableau de bord admin avec la liste des utilisateurs et des fils.
 func (c *AdminController) Dashboard(w http.ResponseWriter, r *http.Request) {
 	users, usersErr := c.adminService.ListUsers()
 	if usersErr != nil {
@@ -46,14 +49,17 @@ func (c *AdminController) Dashboard(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "admin.html", data)
 }
 
+// Bannit l'utilisateur cible.
 func (c *AdminController) Ban(w http.ResponseWriter, r *http.Request) {
 	c.setBan(w, r, true)
 }
 
+// Leve le bannissement de l'utilisateur cible.
 func (c *AdminController) Unban(w http.ResponseWriter, r *http.Request) {
 	c.setBan(w, r, false)
 }
 
+// Applique ou retire le bannissement puis redirige vers la page admin.
 func (c *AdminController) setBan(w http.ResponseWriter, r *http.Request, banned bool) {
 	user := middleware.GetUser(r)
 

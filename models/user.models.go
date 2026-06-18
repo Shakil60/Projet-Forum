@@ -1,5 +1,7 @@
 package models
 
+// Represente un utilisateur du forum.
+
 type User struct {
 	Id        int    `json:"id"`
 	Username  string `json:"nom_utilisateur"`
@@ -11,6 +13,7 @@ type User struct {
 	CreatedAt string `json:"date_creation"`
 }
 
+// Indique si l'utilisateur a le role administrateur.
 func (u User) IsAdmin() bool {
 	return u.Role == "administrateur"
 }

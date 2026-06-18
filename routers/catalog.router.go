@@ -1,5 +1,7 @@
 package routers
 
+// Declare les routes du catalogue de films, series et personnes.
+
 import (
 	"forum/controllers"
 	"forum/middleware"
@@ -8,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Enregistre les routes du catalogue sur le routeur.
 func RegisterCatalogRoutes(r *mux.Router, c *controllers.CatalogController, mw *middleware.Middleware) {
 	r.Handle("/catalog", mw.Optional(http.HandlerFunc(c.Home))).Methods("GET")
 	r.Handle("/catalog/search", mw.Optional(http.HandlerFunc(c.Search))).Methods("GET")

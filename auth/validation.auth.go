@@ -1,5 +1,7 @@
 package auth
 
+// Verification et lecture du contenu des jetons JWT.
+
 import (
 	"errors"
 	"fmt"
@@ -7,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+// Verifie la signature du jeton et renvoie les informations qu'il contient.
 func ValidateToken(tokenString string) (*Claims, error) {
 	claims := &Claims{}
 

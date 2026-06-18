@@ -1,5 +1,7 @@
 package dto
 
+// Gere le calcul de la pagination (pages, limite, decalage).
+
 type Pagination struct {
 	Page       int
 	Size       int
@@ -8,6 +10,7 @@ type Pagination struct {
 	ShowAll    bool
 }
 
+// Construit une pagination en bornant la page et en calculant le nombre total de pages.
 func NewPagination(page int, size int, total int) Pagination {
 	showAll := size <= 0
 

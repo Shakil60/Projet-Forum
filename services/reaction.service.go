@@ -1,5 +1,7 @@
 package services
 
+// Logique metier des reactions (like / dislike) sur les messages.
+
 import (
 	"errors"
 	"forum/dto"
@@ -18,6 +20,7 @@ func InitReactionService(reactionRepository *repositories.ReactionRepository, me
 	}
 }
 
+// Ajoute, retire ou change la reaction d'un utilisateur puis renvoie les compteurs a jour.
 func (s *ReactionService) Toggle(userId int, messageId int, reactionType string) (dto.ReactionResponseDto, error) {
 	if reactionType != "like" && reactionType != "dislike" {
 		return dto.ReactionResponseDto{}, errors.New("type de reaction invalide")

@@ -1,5 +1,7 @@
 package repositories
 
+// Acces a la base de donnees pour les utilisateurs.
+
 import (
 	"database/sql"
 	"forum/models"
@@ -14,6 +16,7 @@ func InitUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db}
 }
 
+// Insere un nouvel utilisateur et renvoie son identifiant.
 func (r *UserRepository) Create(user models.User) (int, error) {
 	query := "INSERT INTO `utilisateurs`(`nom_utilisateur`, `email`, `mot_de_passe`, `sel`, `role`) VALUES (?,?,?,?,?);"
 
@@ -30,6 +33,7 @@ func (r *UserRepository) Create(user models.User) (int, error) {
 	return int(id), nil
 }
 
+// Indique si un nom d'utilisateur est deja pris.
 func (r *UserRepository) ExistsByUsername(username string) (bool, error) {
 	var count int
 	err := r.db.QueryRow("SELECT COUNT(*) FROM `utilisateurs` WHERE `nom_utilisateur` = ?;", username).Scan(&count)
@@ -39,6 +43,7 @@ func (r *UserRepository) ExistsByUsername(username string) (bool, error) {
 	return count > 0, nil
 }
 
+// Indique si un email est deja utilise.
 func (r *UserRepository) ExistsByEmail(email string) (bool, error) {
 	var count int
 	err := r.db.QueryRow("SELECT COUNT(*) FROM `utilisateurs` WHERE `email` = ?;", email).Scan(&count)
@@ -48,6 +53,7 @@ func (r *UserRepository) ExistsByEmail(email string) (bool, error) {
 	return count > 0, nil
 }
 
+// Recherche un utilisateur par nom d'utilisateur ou email (pour la connexion).
 func (r *UserRepository) FindByLogin(identifiant string) (models.User, error) {
 	var user models.User
 	query := "SELECT `id`, `nom_utilisateur`, `email`, `mot_de_passe`, `sel`, `role`, `banni`, `date_creation` FROM `utilisateurs` WHERE `nom_utilisateur` = ? OR `email` = ?;"
@@ -64,6 +70,7 @@ func (r *UserRepository) FindByLogin(identifiant string) (models.User, error) {
 	return user, nil
 }
 
+// Recupere un utilisateur par son identifiant.
 func (r *UserRepository) FindById(id int) (models.User, error) {
 	var user models.User
 	query := "SELECT `id`, `nom_utilisateur`, `email`, `mot_de_passe`, `sel`, `role`, `banni`, `date_creation` FROM `utilisateurs` WHERE `id` = ?;"
@@ -80,6 +87,7 @@ func (r *UserRepository) FindById(id int) (models.User, error) {
 	return user, nil
 }
 
+// Recupere tous les utilisateurs (pour l'administration).
 func (r *UserRepository) ReadAll() ([]models.User, error) {
 	var users []models.User
 	query := "SELECT `id`, `nom_utilisateur`, `email`, `role`, `banni`, `date_creation` FROM `utilisateurs` ORDER BY `date_creation` DESC;"
@@ -101,6 +109,7 @@ func (r *UserRepository) ReadAll() ([]models.User, error) {
 	return users, nil
 }
 
+// Bannit ou debannit un utilisateur.
 func (r *UserRepository) SetBanned(id int, banned bool) error {
 	result, err := r.db.Exec("UPDATE `utilisateurs` SET `banni` = ? WHERE `id` = ?;", banned, id)
 	if err != nil {

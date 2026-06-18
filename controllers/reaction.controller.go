@@ -1,5 +1,7 @@
 package controllers
 
+// Gere les reactions (like / dislike) sur les messages, en JSON.
+
 import (
 	"encoding/json"
 	"forum/helper"
@@ -20,6 +22,7 @@ type reactionRequest struct {
 	Type string `json:"type"`
 }
 
+// Ajoute ou retire une reaction sur un message et renvoie le resultat en JSON.
 func (c *ReactionController) Toggle(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 

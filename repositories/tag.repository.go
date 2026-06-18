@@ -1,5 +1,7 @@
 package repositories
 
+// Acces a la base de donnees pour les tags.
+
 import (
 	"database/sql"
 	"forum/models"
@@ -15,6 +17,7 @@ func InitTagRepository(db *sql.DB) *TagRepository {
 	return &TagRepository{db}
 }
 
+// Recupere tous les tags tries par nom.
 func (r *TagRepository) ReadAll() ([]models.Tag, error) {
 	var tags []models.Tag
 	rows, err := r.db.Query("SELECT `id`, `nom` FROM `tags` ORDER BY `nom` ASC;")
@@ -46,6 +49,7 @@ func (r *TagRepository) FindById(id int) (models.Tag, error) {
 	return tag, nil
 }
 
+// Recherche un tag par son nom.
 func (r *TagRepository) FindByName(nom string) (models.Tag, error) {
 	var tag models.Tag
 	err := r.db.QueryRow("SELECT `id`, `nom` FROM `tags` WHERE `nom` = ?;", nom).Scan(&tag.Id, &tag.Nom)
@@ -58,6 +62,7 @@ func (r *TagRepository) FindByName(nom string) (models.Tag, error) {
 	return tag, nil
 }
 
+// Renvoie l'identifiant d'un tag existant ou le cree s'il n'existe pas.
 func (r *TagRepository) FindOrCreate(nom string) (int, error) {
 	nom = strings.TrimSpace(nom)
 	if nom == "" {

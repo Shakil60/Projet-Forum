@@ -1,5 +1,7 @@
 package services
 
+// Logique metier liee aux messages postes dans les fils de discussion.
+
 import (
 	"errors"
 	"forum/dto"
@@ -20,6 +22,7 @@ func InitMessageService(messageRepository *repositories.MessageRepository, threa
 	}
 }
 
+// Cree un message apres avoir verifie que le fil existe et qu'il est encore ouvert.
 func (s *MessageService) Create(authorId int, threadId int, contenu string) (int, error) {
 	contenu = strings.TrimSpace(contenu)
 	if contenu == "" {
@@ -46,6 +49,7 @@ func (s *MessageService) Create(authorId int, threadId int, contenu string) (int
 	return s.messageRepository.Create(message)
 }
 
+// Renvoie les messages d'un fil avec leur pagination.
 func (s *MessageService) ReadForThread(threadId int, sort string, currentUserId int, page int, size int) ([]models.Message, dto.Pagination, error) {
 	total, err := s.messageRepository.CountByThread(threadId)
 	if err != nil {
@@ -62,6 +66,7 @@ func (s *MessageService) ReadForThread(threadId int, sort string, currentUserId 
 	return messages, pagination, nil
 }
 
+// Recupere un message et verifie que l'utilisateur en est bien l'auteur.
 func (s *MessageService) requireOwner(messageId int, userId int) (models.Message, error) {
 	message, err := s.messageRepository.ReadById(messageId)
 	if err != nil {
@@ -80,6 +85,7 @@ func (s *MessageService) GetForEdit(userId int, messageId int) (models.Message, 
 	return s.requireOwner(messageId, userId)
 }
 
+// Modifie le contenu d'un message appartenant a l'utilisateur et renvoie l'id du fil.
 func (s *MessageService) Update(userId int, messageId int, contenu string) (int, error) {
 	message, err := s.requireOwner(messageId, userId)
 	if err != nil {
@@ -97,6 +103,7 @@ func (s *MessageService) Update(userId int, messageId int, contenu string) (int,
 	return message.ThreadId, nil
 }
 
+// Supprime un message si l'utilisateur en est l'auteur ou s'il est administrateur.
 func (s *MessageService) Delete(userId int, isAdmin bool, messageId int) (int, error) {
 	message, err := s.messageRepository.ReadById(messageId)
 	if err != nil {

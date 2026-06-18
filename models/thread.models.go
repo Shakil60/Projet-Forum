@@ -1,5 +1,7 @@
 package models
 
+// Represente un fil de discussion du forum.
+
 type Thread struct {
 	Id           int    `json:"id"`
 	Titre        string `json:"titre"`

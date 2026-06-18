@@ -1,5 +1,7 @@
 package dto
 
+// Definit les structures pour decoder les reponses de l'API TMDB.
+
 type TMDBPagedResponse[T any] struct {
 	Page         int `json:"page"`
 	TotalPages   int `json:"total_pages"`

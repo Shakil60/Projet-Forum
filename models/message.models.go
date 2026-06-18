@@ -1,5 +1,7 @@
 package models
 
+// Represente un message poste dans un fil de discussion.
+
 type Message struct {
 	Id           int    `json:"id"`
 	ThreadId     int    `json:"fil_id"`

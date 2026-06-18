@@ -1,5 +1,7 @@
 package controllers
 
+// Gere les requetes HTTP liees aux fils de discussion.
+
 import (
 	"forum/helper"
 	"forum/middleware"
@@ -31,6 +33,7 @@ func readThreadId(r *http.Request) (int, error) {
 	return strconv.Atoi(mux.Vars(r)["id"])
 }
 
+// Decoupe une chaine de tags separes par des virgules en liste nettoyee.
 func splitTags(raw string) []string {
 	parts := strings.Split(raw, ",")
 	var tags []string
@@ -43,6 +46,7 @@ func splitTags(raw string) []string {
 	return tags
 }
 
+// Convertit les valeurs de formulaire en identifiants de tags valides.
 func parseTagIds(values []string) []int {
 	var ids []int
 	for _, value := range values {
@@ -53,6 +57,7 @@ func parseTagIds(values []string) []int {
 	return ids
 }
 
+// Affiche la liste des fils avec filtres, recherche et pagination.
 func (c *ThreadController) Home(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	search := strings.TrimSpace(r.URL.Query().Get("q"))
@@ -93,6 +98,7 @@ func (c *ThreadController) Home(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "home.html", data)
 }
 
+// Affiche la page d'un fil avec ses messages.
 func (c *ThreadController) Show(w http.ResponseWriter, r *http.Request) {
 	id, idErr := readThreadId(r)
 	if idErr != nil {
@@ -135,6 +141,7 @@ func (c *ThreadController) Show(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "thread.html", data)
 }
 
+// Affiche le formulaire de creation d'un fil.
 func (c *ThreadController) NewForm(w http.ResponseWriter, r *http.Request) {
 	tags, _ := c.tagService.ReadAll()
 	data := baseData(r)
@@ -143,6 +150,7 @@ func (c *ThreadController) NewForm(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "thread_form.html", data)
 }
 
+// Cree un nouveau fil avec ses tags puis redirige vers celui-ci.
 func (c *ThreadController) Create(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	if err := r.ParseForm(); err != nil {
@@ -171,6 +179,7 @@ func (c *ThreadController) Create(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/threads/"+strconv.Itoa(threadId), http.StatusSeeOther)
 }
 
+// Affiche le formulaire d'edition d'un fil (auteur ou admin).
 func (c *ThreadController) EditForm(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	id, idErr := readThreadId(r)
@@ -202,6 +211,7 @@ func (c *ThreadController) EditForm(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "thread_form.html", data)
 }
 
+// Enregistre les modifications d'un fil.
 func (c *ThreadController) Update(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	id, idErr := readThreadId(r)
@@ -228,6 +238,7 @@ func (c *ThreadController) Update(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/threads/"+strconv.Itoa(id), http.StatusSeeOther)
 }
 
+// Change l'etat d'un fil (ouvert, ferme, archive).
 func (c *ThreadController) ChangeState(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	id, idErr := readThreadId(r)
@@ -249,6 +260,7 @@ func (c *ThreadController) ChangeState(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/threads/"+strconv.Itoa(id), http.StatusSeeOther)
 }
 
+// Supprime un fil (auteur ou admin).
 func (c *ThreadController) Delete(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	id, idErr := readThreadId(r)

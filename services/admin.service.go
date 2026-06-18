@@ -1,5 +1,7 @@
 package services
 
+// Logique metier reservee a l'administration des utilisateurs.
+
 import (
 	"errors"
 	"forum/models"
@@ -18,6 +20,7 @@ func (s *AdminService) ListUsers() ([]models.User, error) {
 	return s.userRepository.ReadAll()
 }
 
+// Bannit ou debannit un utilisateur en verifiant les regles (pas soi-meme, pas un admin).
 func (s *AdminService) SetBanned(actingUserId int, targetUserId int, banned bool) error {
 	if actingUserId == targetUserId {
 		return errors.New("vous ne pouvez pas bannir votre propre compte")

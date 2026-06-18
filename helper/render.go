@@ -1,5 +1,7 @@
 package helper
 
+// Chargement et rendu des gabarits HTML cote serveur.
+
 import (
 	"bytes"
 	"html/template"
@@ -12,6 +14,7 @@ type Renderer struct {
 	templates map[string]*template.Template
 }
 
+// Fonctions utilitaires disponibles dans les templates (images TMDB, texte, etc.).
 var funcMap = template.FuncMap{
 	"add": func(a, b int) int { return a + b },
 	"sub": func(a, b int) int { return a - b },
@@ -53,6 +56,7 @@ var funcMap = template.FuncMap{
 	},
 }
 
+// Pre-charge toutes les pages avec leur layout et les met en cache.
 func InitRenderer(dir string) *Renderer {
 	cache := map[string]*template.Template{}
 
@@ -75,6 +79,7 @@ func InitRenderer(dir string) *Renderer {
 	return &Renderer{templates: cache}
 }
 
+// Affiche la page demandee avec ses donnees, ou renvoie une erreur si elle echoue.
 func (rd *Renderer) Render(w http.ResponseWriter, status int, page string, data map[string]any) {
 	ts, ok := rd.templates[page]
 	if !ok {

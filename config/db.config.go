@@ -1,5 +1,7 @@
 package config
 
+// Initialisation de la connexion a la base de donnees MySQL.
+
 import (
 	"database/sql"
 	"fmt"
@@ -8,6 +10,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// Ouvre la connexion MySQL a partir des variables d'environnement et verifie qu'elle repond.
 func InitDB() *sql.DB {
 	user := GetRequiredEnv("DB_USER")
 	pwd := GetEnvWithDefault("DB_PWD", "")

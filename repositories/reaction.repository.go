@@ -1,5 +1,7 @@
 package repositories
 
+// Acces a la base de donnees pour les reactions.
+
 import (
 	"database/sql"
 	"fmt"
@@ -13,6 +15,7 @@ func InitReactionRepository(db *sql.DB) *ReactionRepository {
 	return &ReactionRepository{db}
 }
 
+// Renvoie la reaction d'un utilisateur sur un message (vide si aucune).
 func (r *ReactionRepository) Find(messageId int, userId int) (string, error) {
 	var reactionType string
 	err := r.db.QueryRow("SELECT `type` FROM `reactions` WHERE `message_id` = ? AND `utilisateur_id` = ?;", messageId, userId).Scan(&reactionType)
@@ -25,6 +28,7 @@ func (r *ReactionRepository) Find(messageId int, userId int) (string, error) {
 	return reactionType, nil
 }
 
+// Ajoute ou met a jour la reaction d'un utilisateur sur un message.
 func (r *ReactionRepository) Set(messageId int, userId int, reactionType string) error {
 	query := "INSERT INTO `reactions`(`message_id`, `utilisateur_id`, `type`) VALUES (?,?,?) " +
 		"ON DUPLICATE KEY UPDATE `type` = VALUES(`type`);"
@@ -34,6 +38,7 @@ func (r *ReactionRepository) Set(messageId int, userId int, reactionType string)
 	return nil
 }
 
+// Retire la reaction d'un utilisateur sur un message.
 func (r *ReactionRepository) Remove(messageId int, userId int) error {
 	if _, err := r.db.Exec("DELETE FROM `reactions` WHERE `message_id` = ? AND `utilisateur_id` = ?;", messageId, userId); err != nil {
 		return fmt.Errorf("Erreur suppression reaction - %s", err.Error())
@@ -41,6 +46,7 @@ func (r *ReactionRepository) Remove(messageId int, userId int) error {
 	return nil
 }
 
+// Compte les likes et dislikes d'un message.
 func (r *ReactionRepository) Counts(messageId int) (int, int, error) {
 	var likes, dislikes int
 	query := "SELECT " +

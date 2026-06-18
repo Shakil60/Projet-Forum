@@ -1,5 +1,7 @@
 package repositories
 
+// Acces a la base de donnees pour les fils de discussion.
+
 import (
 	"database/sql"
 	"forum/models"
@@ -14,6 +16,7 @@ func InitThreadRepository(db *sql.DB) *ThreadRepository {
 	return &ThreadRepository{db}
 }
 
+// Insere un nouveau fil et renvoie son identifiant.
 func (r *ThreadRepository) Create(thread models.Thread) (int, error) {
 	query := "INSERT INTO `fils`(`titre`, `contenu`, `utilisateur_id`, `etat`) VALUES (?,?,?,?);"
 
@@ -30,6 +33,7 @@ func (r *ThreadRepository) Create(thread models.Thread) (int, error) {
 	return int(id), nil
 }
 
+// Remplace les tags associes a un fil.
 func (r *ThreadRepository) SetTags(threadId int, tagIds []int) error {
 	if _, err := r.db.Exec("DELETE FROM `fil_tags` WHERE `fil_id` = ?;", threadId); err != nil {
 		return fmt.Errorf("Erreur association tags - %s", err.Error())
@@ -44,6 +48,7 @@ func (r *ThreadRepository) SetTags(threadId int, tagIds []int) error {
 	return nil
 }
 
+// Charge les tags d'un fil.
 func (r *ThreadRepository) loadTags(threadId int) ([]models.Tag, error) {
 	var tags []models.Tag
 	query := "SELECT t.`id`, t.`nom` FROM `tags` t JOIN `fil_tags` ft ON ft.`tag_id` = t.`id` WHERE ft.`fil_id` = ? ORDER BY t.`nom`;"
@@ -65,6 +70,7 @@ func (r *ThreadRepository) loadTags(threadId int) ([]models.Tag, error) {
 	return tags, nil
 }
 
+// Recupere un fil par son identifiant, avec ses tags.
 func (r *ThreadRepository) ReadById(id int) (models.Thread, error) {
 	var thread models.Thread
 	query := "SELECT f.`id`, f.`titre`, f.`contenu`, f.`utilisateur_id`, u.`nom_utilisateur`, f.`etat`, f.`date_creation`, " +
@@ -91,6 +97,7 @@ func (r *ThreadRepository) ReadById(id int) (models.Thread, error) {
 	return thread, nil
 }
 
+// Construit la clause WHERE et ses parametres selon le tag et la recherche.
 func (r *ThreadRepository) buildFilters(tagId int, search string) (string, []any) {
 	clause := " WHERE f.`etat` <> 'archive'"
 	args := []any{}
@@ -109,6 +116,7 @@ func (r *ThreadRepository) buildFilters(tagId int, search string) (string, []any
 	return clause, args
 }
 
+// Compte les fils visibles correspondant aux filtres.
 func (r *ThreadRepository) CountVisible(tagId int, search string) (int, error) {
 	clause, args := r.buildFilters(tagId, search)
 	query := "SELECT COUNT(*) FROM `fils` f" + clause + ";"
@@ -120,6 +128,7 @@ func (r *ThreadRepository) CountVisible(tagId int, search string) (int, error) {
 	return count, nil
 }
 
+// Recupere les fils visibles (non archives) selon les filtres et la pagination.
 func (r *ThreadRepository) ReadVisible(tagId int, search string, limit int, offset int) ([]models.Thread, error) {
 	clause, args := r.buildFilters(tagId, search)
 
@@ -163,6 +172,7 @@ func (r *ThreadRepository) ReadVisible(tagId int, search string, limit int, offs
 	return threads, nil
 }
 
+// Recupere tous les fils (y compris archives) pour l'administration.
 func (r *ThreadRepository) ReadAllForAdmin() ([]models.Thread, error) {
 	query := "SELECT f.`id`, f.`titre`, f.`contenu`, f.`utilisateur_id`, u.`nom_utilisateur`, f.`etat`, f.`date_creation`, " +
 		"(SELECT COUNT(*) FROM `messages` m WHERE m.`fil_id` = f.`id`) " +
@@ -189,6 +199,7 @@ func (r *ThreadRepository) ReadAllForAdmin() ([]models.Thread, error) {
 	return threads, nil
 }
 
+// Modifie le titre et le contenu d'un fil.
 func (r *ThreadRepository) Update(id int, titre string, contenu string) error {
 	result, err := r.db.Exec("UPDATE `fils` SET `titre` = ?, `contenu` = ? WHERE `id` = ?;", titre, contenu, id)
 	if err != nil {
@@ -200,6 +211,7 @@ func (r *ThreadRepository) Update(id int, titre string, contenu string) error {
 	return nil
 }
 
+// Change l'etat d'un fil (ouvert, ferme, archive).
 func (r *ThreadRepository) UpdateState(id int, etat string) error {
 	result, err := r.db.Exec("UPDATE `fils` SET `etat` = ? WHERE `id` = ?;", etat, id)
 	if err != nil {
@@ -211,6 +223,7 @@ func (r *ThreadRepository) UpdateState(id int, etat string) error {
 	return nil
 }
 
+// Supprime un fil.
 func (r *ThreadRepository) Delete(id int) error {
 	result, err := r.db.Exec("DELETE FROM `fils` WHERE `id` = ?;", id)
 	if err != nil {

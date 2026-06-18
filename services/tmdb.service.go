@@ -1,5 +1,7 @@
 package services
 
+// Service d'appel a l'API externe TMDB pour les films, series et personnes.
+
 import (
 	"encoding/json"
 	"errors"
@@ -33,6 +35,7 @@ func (s *TMDBService) IsConfigured() bool {
 	return s.apiKey != ""
 }
 
+// Renvoie une erreur explicite si la cle API n'est pas configuree.
 func (s *TMDBService) ConfigError() error {
 	if s.IsConfigured() {
 		return nil
@@ -40,6 +43,7 @@ func (s *TMDBService) ConfigError() error {
 	return errors.New("cle API TMDB manquante : ajoutez TMDB_API_KEY dans le fichier .env")
 }
 
+// Construit l'URL, ajoute la cle et la langue, puis effectue l'appel HTTP vers TMDB.
 func (s *TMDBService) request(path string, params url.Values) ([]byte, error) {
 	if err := s.ConfigError(); err != nil {
 		return nil, err
@@ -71,6 +75,7 @@ func (s *TMDBService) request(path string, params url.Values) ([]byte, error) {
 	return body, nil
 }
 
+// Decode le JSON renvoye par TMDB dans la structure cible (fonction generique).
 func decode[T any](body []byte, target *T) error {
 	if err := json.Unmarshal(body, target); err != nil {
 		return fmt.Errorf("erreur decodage TMDB : %w", err)
@@ -141,6 +146,7 @@ func (s *TMDBService) SearchPeople(query string, page int) (dto.TMDBPagedRespons
 	return result, decode(body, &result)
 }
 
+// Lance une recherche combinee sur les films, les series et les personnes.
 func (s *TMDBService) SearchAll(query string, page int) (dto.TMDBSearchResults, error) {
 	results := dto.TMDBSearchResults{
 		Query: query,
@@ -214,6 +220,7 @@ func (s *TMDBService) GetSeriesCredits(id int) (dto.TMDBCredits, error) {
 	return result, decode(body, &result)
 }
 
+// Ne garde que les realisateurs dans la liste de l'equipe technique.
 func FilterDirectors(crew []dto.TMDBCrewMember) []dto.TMDBCrewMember {
 	var directors []dto.TMDBCrewMember
 	for _, member := range crew {
@@ -224,6 +231,7 @@ func FilterDirectors(crew []dto.TMDBCrewMember) []dto.TMDBCrewMember {
 	return directors
 }
 
+// Limite la liste des acteurs aux premiers du casting.
 func TopCast(cast []dto.TMDBCastMember, limit int) []dto.TMDBCastMember {
 	if len(cast) <= limit {
 		return cast

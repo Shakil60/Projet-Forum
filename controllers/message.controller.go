@@ -1,5 +1,7 @@
 package controllers
 
+// Gere les requetes HTTP liees aux messages d'un fil de discussion.
+
 import (
 	"forum/helper"
 	"forum/middleware"
@@ -23,6 +25,7 @@ func readMessageId(r *http.Request) (int, error) {
 	return strconv.Atoi(mux.Vars(r)["id"])
 }
 
+// Ajoute un nouveau message dans un fil.
 func (c *MessageController) Create(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	threadId, idErr := readThreadId(r)
@@ -40,6 +43,7 @@ func (c *MessageController) Create(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/threads/"+strconv.Itoa(threadId), http.StatusSeeOther)
 }
 
+// Affiche le formulaire d'edition d'un message de l'utilisateur.
 func (c *MessageController) EditForm(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	id, idErr := readMessageId(r)
@@ -59,6 +63,7 @@ func (c *MessageController) EditForm(w http.ResponseWriter, r *http.Request) {
 	c.renderer.Render(w, http.StatusOK, "message_form.html", data)
 }
 
+// Enregistre les modifications d'un message.
 func (c *MessageController) Update(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	id, idErr := readMessageId(r)
@@ -77,6 +82,7 @@ func (c *MessageController) Update(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/threads/"+strconv.Itoa(threadId), http.StatusSeeOther)
 }
 
+// Supprime un message (auteur ou admin).
 func (c *MessageController) Delete(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUser(r)
 	id, idErr := readMessageId(r)

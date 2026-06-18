@@ -1,5 +1,7 @@
 package services
 
+// Logique metier liee aux tags (categories) des fils de discussion.
+
 import (
 	"forum/models"
 	"forum/repositories"

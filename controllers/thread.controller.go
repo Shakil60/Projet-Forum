@@ -147,6 +147,9 @@ func (c *ThreadController) NewForm(w http.ResponseWriter, r *http.Request) {
 	data := baseData(r)
 	data["Tags"] = tags
 	data["SelectedTags"] = map[int]bool{}
+	// Pre-remplissage depuis le catalogue (bouton "En discuter sur le forum")
+	data["Titre"] = strings.TrimSpace(r.URL.Query().Get("titre"))
+	data["Contenu"] = strings.TrimSpace(r.URL.Query().Get("contenu"))
 	c.renderer.Render(w, http.StatusOK, "thread_form.html", data)
 }
 

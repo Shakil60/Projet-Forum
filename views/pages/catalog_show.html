@@ -24,6 +24,9 @@
                 {{range .Show.Genres}}<span class="tag">{{.Name}}</span>{{end}}
             </div>
             <p class="media-overview">{{.Show.Overview}}</p>
+            <div class="media-actions">
+                <a class="btn btn-accent" href="/threads/new?titre={{.Show.Name}}&contenu=Discussion sur la série « {{.Show.Name}} » : qu'en avez-vous pensé ?">💬 En discuter sur le forum</a>
+            </div>
         </div>
     </div>
 </article>

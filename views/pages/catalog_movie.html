@@ -23,6 +23,9 @@
                 {{range .Movie.Genres}}<span class="tag">{{.Name}}</span>{{end}}
             </div>
             <p class="media-overview">{{.Movie.Overview}}</p>
+            <div class="media-actions">
+                <a class="btn btn-accent" href="/threads/new?titre={{.Movie.Title}}&contenu=Discussion sur le film « {{.Movie.Title}} » : qu'en avez-vous pensé ?">💬 En discuter sur le forum</a>
+            </div>
         </div>
     </div>
 </article>

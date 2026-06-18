@@ -936,6 +936,10 @@ select {
     white-space: pre-line;
 }
 
+.media-actions {
+    margin-top: 18px;
+}
+
 .people-row {
     display: flex;
     flex-wrap: wrap;

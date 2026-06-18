@@ -1,0 +1,48 @@
+erDiagram
+    UTILISATEURS ||--o{ FILS : "rédige"
+    UTILISATEURS ||--o{ MESSAGES : "poste"
+    UTILISATEURS ||--o{ REACTIONS : "exprime"
+    FILS ||--o{ MESSAGES : "contient"
+    MESSAGES ||--o{ REACTIONS : "reçoit"
+    FILS ||--o{ FIL_TAGS : ""
+    TAGS ||--o{ FIL_TAGS : ""
+
+    UTILISATEURS {
+        int id PK
+        varchar nom_utilisateur "unique"
+        varchar email "unique"
+        varchar mot_de_passe
+        varchar sel
+        enum role "utilisateur / administrateur"
+        boolean banni
+        timestamp date_creation
+    }
+    TAGS {
+        int id PK
+        varchar nom "unique"
+    }
+    FILS {
+        int id PK
+        varchar titre
+        text contenu
+        int utilisateur_id FK
+        enum etat "ouvert / ferme / archive"
+        timestamp date_creation
+    }
+    FIL_TAGS {
+        int fil_id PK,FK
+        int tag_id PK,FK
+    }
+    MESSAGES {
+        int id PK
+        int fil_id FK
+        int utilisateur_id FK
+        text contenu
+        timestamp date_envoi
+    }
+    REACTIONS {
+        int id PK
+        int message_id FK
+        int utilisateur_id FK
+        enum type "like / dislike"
+    }

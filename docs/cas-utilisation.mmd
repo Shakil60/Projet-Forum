@@ -1,0 +1,39 @@
+flowchart LR
+    visiteur([Visiteur])
+    membre([Membre])
+    admin([Administrateur])
+
+    subgraph S[Système CinéTalk]
+        v1(Consulter les fils et messages)
+        v2(Consulter le catalogue cinéma)
+        v3(S'inscrire)
+        v4(Se connecter)
+        m1(Créer / modifier / supprimer ses fils)
+        m2(Poster / modifier / supprimer ses messages)
+        m3(Réagir like / dislike)
+        m4(Rechercher et filtrer par genre)
+        m6(Se déconnecter)
+        a1(Consulter le tableau de bord)
+        a2(Modérer un fil : changer l'état)
+        a3(Supprimer tout fil ou message)
+        a4(Bannir / réactiver un compte)
+    end
+
+    visiteur --> v1
+    visiteur --> v2
+    visiteur --> v3
+    visiteur --> v4
+
+    membre --> m1
+    membre --> m2
+    membre --> m3
+    membre --> m4
+    membre --> m6
+
+    admin --> a1
+    admin --> a2
+    admin --> a3
+    admin --> a4
+
+    membre -.->|hérite de| visiteur
+    admin -.->|hérite de| membre

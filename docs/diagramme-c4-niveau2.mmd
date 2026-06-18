@@ -1,0 +1,20 @@
+C4Container
+    title Diagramme de conteneurs - CinéTalk
+
+    Person(membre, "Membre / Visiteur", "Utilise le forum depuis son navigateur")
+    Person(admin, "Administrateur", "Modère le contenu et les comptes")
+
+    System_Boundary(cinetalk, "CinéTalk") {
+        Container(navigateur, "Navigateur web", "HTML, CSS, JavaScript", "Affiche les pages et envoie les réactions like/dislike en AJAX")
+        Container(app, "Application Web", "Go, gorilla/mux, html/template", "Authentification JWT, fils, messages, réactions, catalogue, administration ; rendu des pages côté serveur")
+        ContainerDb(db, "Base de données", "MySQL 8", "Utilisateurs, fils, messages, réactions, genres")
+    }
+
+    System_Ext(tmdb, "API TMDB", "Service externe REST/JSON")
+
+    Rel(membre, navigateur, "Navigue", "")
+    Rel(admin, navigateur, "Navigue", "")
+    Rel(navigateur, app, "Requêtes de pages et API réactions", "HTTPS / JSON")
+    Rel(app, navigateur, "Pages HTML", "HTTPS")
+    Rel(app, db, "Lit et écrit", "SQL / port 3306")
+    Rel(app, tmdb, "Interroge films, séries, personnes", "HTTPS / JSON")

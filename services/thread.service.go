@@ -34,6 +34,15 @@ func (s *ThreadService) Create(authorId int, titre string, contenu string, tagId
 		return -1, errors.New("le titre et le contenu sont obligatoires")
 	}
 
+	// Un fil doit etre associe a au moins un genre (regle de gestion FT-3)
+	resolvedTags, tagErr := s.resolveTags(tagIds, newTags)
+	if tagErr != nil {
+		return -1, tagErr
+	}
+	if len(resolvedTags) == 0 {
+		return -1, errors.New("un fil doit etre associe a au moins un genre")
+	}
+
 	thread := models.Thread{
 		Titre:    titre,
 		Contenu:  contenu,
@@ -46,14 +55,8 @@ func (s *ThreadService) Create(authorId int, titre string, contenu string, tagId
 		return -1, err
 	}
 
-	resolvedTags, tagErr := s.resolveTags(tagIds, newTags)
-	if tagErr != nil {
-		return -1, tagErr
-	}
-	if len(resolvedTags) > 0 {
-		if setErr := s.threadRepository.SetTags(threadId, resolvedTags); setErr != nil {
-			return -1, setErr
-		}
+	if setErr := s.threadRepository.SetTags(threadId, resolvedTags); setErr != nil {
+		return -1, setErr
 	}
 
 	return threadId, nil
@@ -154,14 +157,19 @@ func (s *ThreadService) Update(userId int, isAdmin bool, threadId int, titre str
 		return errors.New("le titre et le contenu sont obligatoires")
 	}
 
-	if err := s.threadRepository.Update(threadId, titre, contenu); err != nil {
-		return err
-	}
-
+	// Un fil doit rester associe a au moins un genre (regle de gestion FT-3)
 	resolvedTags, tagErr := s.resolveTags(tagIds, newTags)
 	if tagErr != nil {
 		return tagErr
 	}
+	if len(resolvedTags) == 0 {
+		return errors.New("un fil doit etre associe a au moins un genre")
+	}
+
+	if err := s.threadRepository.Update(threadId, titre, contenu); err != nil {
+		return err
+	}
+
 	return s.threadRepository.SetTags(threadId, resolvedTags)
 }
 

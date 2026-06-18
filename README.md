@@ -60,6 +60,13 @@ forum/
 └── migration/           Scripts de création et de remplissage de la base
 ```
 
+## Documentation et gestion de projet
+
+- **Diagrammes** (dossier [`docs/`](docs/)) : architecture C4 (contexte, conteneurs, composants),
+  diagramme de cas d'utilisation par rôle et modèle logique de données (MLD).
+- **Suivi des tâches** : [tableau Trello du projet](https://trello.com/b/rzDcTCB9/mon-tableau-trello)
+  (colonnes À faire / En cours / Terminé, répartition entre les membres).
+
 ## Prérequis
 
 - [Go](https://go.dev/dl/) version 1.22 ou supérieure

@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CinéTalk, la communauté de discussion dédiée au cinéma et aux séries.">
+    <meta name="theme-color" content="#2c3e50">
     <title>{{block "title" .}}CinéTalk{{end}}</title>
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
+<!-- Lien d'evitement : permet d'aller directement au contenu au clavier -->
+<a class="skip-link" href="#contenu">Aller au contenu</a>
 <header class="navbar">
     <div class="nav-inner">
-        <a class="brand" href="/">🎬 CinéTalk</a>
+        <a class="brand" href="/"><span aria-hidden="true">🎬</span> CinéTalk</a>
         <nav class="nav-links">
             <a href="/">Accueil</a>
             <a href="/catalog">Catalogue</a>
@@ -28,7 +33,7 @@
     </div>
 </header>
 
-<main class="container">
+<main class="container" id="contenu">
     {{template "content" .}}
 </main>
 

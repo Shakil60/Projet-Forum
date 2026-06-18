@@ -17,7 +17,7 @@
                 {{if .Show.FirstAirDate}}{{.Show.FirstAirDate}}{{end}}
                 {{if .Show.LastAirDate}} — {{.Show.LastAirDate}}{{end}}
                 · {{.Show.NumberOfSeasons}} saison(s), {{.Show.NumberOfEpisodes}} épisode(s)
-                · ★ {{printf "%.1f" .Show.VoteAverage}}
+                · <span aria-hidden="true">★</span> {{printf "%.1f" .Show.VoteAverage}}
                 · {{.Show.Status}}
             </p>
             <div class="thread-tags">

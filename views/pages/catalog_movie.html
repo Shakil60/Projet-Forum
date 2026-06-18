@@ -16,7 +16,7 @@
             <p class="media-meta">
                 {{if .Movie.ReleaseDate}}{{.Movie.ReleaseDate}}{{end}}
                 {{if .Movie.Runtime}} · {{.Movie.Runtime}} min{{end}}
-                · ★ {{printf "%.1f" .Movie.VoteAverage}}
+                · <span aria-hidden="true">★</span> {{printf "%.1f" .Movie.VoteAverage}}
                 · {{.Movie.Status}}
             </p>
             <div class="thread-tags">

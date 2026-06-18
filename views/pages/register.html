@@ -8,15 +8,17 @@
     <form method="POST" action="/register">
         <label>
             Nom d'utilisateur
-            <input type="text" name="nom_utilisateur" value="{{.Username}}" required autofocus>
+            <input type="text" name="nom_utilisateur" value="{{.Username}}" required autofocus
+                   autocomplete="username" autocapitalize="off" spellcheck="false">
         </label>
         <label>
             Adresse e-mail
-            <input type="email" name="email" value="{{.Email}}" required>
+            <input type="email" name="email" value="{{.Email}}" required
+                   autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false">
         </label>
         <label>
             Mot de passe
-            <input type="password" name="mot_de_passe" required>
+            <input type="password" name="mot_de_passe" required autocomplete="new-password">
         </label>
         <p class="hint">12 caractères minimum, dont au moins une majuscule et un caractère spécial.</p>
         <button type="submit" class="btn btn-accent btn-block">S'inscrire</button>

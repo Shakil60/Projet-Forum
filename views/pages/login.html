@@ -8,11 +8,12 @@
     <form method="POST" action="/login">
         <label>
             Nom d'utilisateur ou e-mail
-            <input type="text" name="identifiant" value="{{.Identifiant}}" required autofocus>
+            <input type="text" name="identifiant" value="{{.Identifiant}}" required autofocus
+                   autocomplete="username" autocapitalize="off" spellcheck="false">
         </label>
         <label>
             Mot de passe
-            <input type="password" name="mot_de_passe" required>
+            <input type="password" name="mot_de_passe" required autocomplete="current-password">
         </label>
         <button type="submit" class="btn btn-accent btn-block">Se connecter</button>
     </form>

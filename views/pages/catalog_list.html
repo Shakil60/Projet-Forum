@@ -14,7 +14,7 @@
 </section>
 
 <form class="search-bar catalog-search" action="/catalog/{{.ListType}}" method="GET">
-    <input type="text" name="q" value="{{.Search}}" placeholder="Rechercher...">
+    <input type="search" name="q" value="{{.Search}}" aria-label="Rechercher dans le catalogue" placeholder="Rechercher…">
     <button type="submit" class="btn btn-accent">Rechercher</button>
 </form>
 
@@ -42,7 +42,7 @@
             <img src="{{tmdbPoster .PosterPath}}" alt="{{.Title}}" loading="lazy">
             <div class="media-card-body">
                 <h3>{{.Title}}</h3>
-                <p class="media-meta">{{.ReleaseDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-meta">{{.ReleaseDate}} · <span aria-hidden="true">★</span> {{printf "%.1f" .VoteAverage}}</p>
                 <p class="media-excerpt">{{truncate .Overview 90}}</p>
             </div>
         </a>
@@ -51,7 +51,7 @@
             <img src="{{tmdbPoster .PosterPath}}" alt="{{.Name}}" loading="lazy">
             <div class="media-card-body">
                 <h3>{{.Name}}</h3>
-                <p class="media-meta">{{.FirstAirDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-meta">{{.FirstAirDate}} · <span aria-hidden="true">★</span> {{printf "%.1f" .VoteAverage}}</p>
                 <p class="media-excerpt">{{truncate .Overview 90}}</p>
             </div>
         </a>

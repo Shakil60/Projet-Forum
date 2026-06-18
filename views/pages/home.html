@@ -7,7 +7,7 @@
 
 {{if .CurrentUser}}
 <form class="search-bar" action="/" method="GET">
-    <input type="text" name="q" value="{{.Search}}" placeholder="Rechercher un sujet ou un genre...">
+    <input type="search" name="q" value="{{.Search}}" aria-label="Rechercher un sujet ou un genre" placeholder="Rechercher un sujet ou un genre…">
     <button type="submit" class="btn btn-accent">Rechercher</button>
 </form>
 {{end}}

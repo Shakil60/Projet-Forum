@@ -65,7 +65,7 @@
     {{if .CurrentUser}}
         {{if eq $thread.Etat "ouvert"}}
         <form class="message-form" action="/threads/{{$thread.Id}}/messages" method="POST">
-            <textarea name="contenu" rows="3" placeholder="Écrivez votre message..." required></textarea>
+            <textarea name="contenu" rows="3" placeholder="Écrivez votre message…" required></textarea>
             <button type="submit" class="btn btn-accent">Publier</button>
         </form>
         {{else}}
@@ -84,17 +84,17 @@
             </div>
             <p class="message-body">{{.Contenu}}</p>
             <div class="message-footer">
-                <div class="reactions" data-message-id="{{.Id}}">
+                <div class="reactions" data-message-id="{{.Id}}" aria-live="polite">
                     {{if $.CurrentUser}}
-                    <button class="reaction-btn like {{if eq .UserReaction "like"}}active{{end}}" data-type="like">
-                        👍 <span class="count-like">{{.Likes}}</span>
+                    <button type="button" class="reaction-btn like {{if eq .UserReaction "like"}}active{{end}}" data-type="like" aria-label="J'aime">
+                        <span aria-hidden="true">👍</span> <span class="count-like">{{.Likes}}</span>
                     </button>
-                    <button class="reaction-btn dislike {{if eq .UserReaction "dislike"}}active{{end}}" data-type="dislike">
-                        👎 <span class="count-dislike">{{.Dislikes}}</span>
+                    <button type="button" class="reaction-btn dislike {{if eq .UserReaction "dislike"}}active{{end}}" data-type="dislike" aria-label="Je n'aime pas">
+                        <span aria-hidden="true">👎</span> <span class="count-dislike">{{.Dislikes}}</span>
                     </button>
                     {{else}}
-                    <span class="reaction-static">👍 {{.Likes}}</span>
-                    <span class="reaction-static">👎 {{.Dislikes}}</span>
+                    <span class="reaction-static"><span aria-hidden="true">👍</span> {{.Likes}}</span>
+                    <span class="reaction-static"><span aria-hidden="true">👎</span> {{.Dislikes}}</span>
                     {{end}}
                     <span class="score">Score : <span class="count-score">{{.Score}}</span></span>
                 </div>

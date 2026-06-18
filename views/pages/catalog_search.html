@@ -6,7 +6,7 @@
 </section>
 
 <form class="search-bar catalog-search" action="/catalog/search" method="GET">
-    <input type="text" name="q" value="{{.Results.Query}}" placeholder="Rechercher un film, une série, un acteur...">
+    <input type="search" name="q" value="{{.Results.Query}}" aria-label="Rechercher dans le catalogue" placeholder="Rechercher un film, une série, un acteur…">
     <button type="submit" class="btn btn-accent">Rechercher</button>
 </form>
 
@@ -26,7 +26,7 @@
             <img src="{{tmdbPoster .PosterPath}}" alt="{{.Title}}" loading="lazy">
             <div class="media-card-body">
                 <h3>{{.Title}}</h3>
-                <p class="media-meta">{{.ReleaseDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-meta">{{.ReleaseDate}} · <span aria-hidden="true">★</span> {{printf "%.1f" .VoteAverage}}</p>
             </div>
         </a>
         {{end}}
@@ -43,7 +43,7 @@
             <img src="{{tmdbPoster .PosterPath}}" alt="{{.Name}}" loading="lazy">
             <div class="media-card-body">
                 <h3>{{.Name}}</h3>
-                <p class="media-meta">{{.FirstAirDate}} · ★ {{printf "%.1f" .VoteAverage}}</p>
+                <p class="media-meta">{{.FirstAirDate}} · <span aria-hidden="true">★</span> {{printf "%.1f" .VoteAverage}}</p>
             </div>
         </a>
         {{end}}

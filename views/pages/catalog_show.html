@@ -60,5 +60,48 @@
 </section>
 {{end}}
 
+<section class="film-social" id="social">
+    <div class="film-social-bar">
+        {{if .CurrentUser}}
+        <form action="/catalog/series/{{.TmdbId}}/favori" method="POST" class="inline-form">
+            <input type="hidden" name="titre" value="{{.Show.Name}}">
+            <input type="hidden" name="affiche" value="{{.Show.PosterPath}}">
+            <button type="submit" class="btn {{if .IsFavori}}btn-accent{{end}}">{{if .IsFavori}}★ En favori{{else}}☆ Ajouter aux favoris{{end}}</button>
+        </form>
+        {{end}}
+        <span class="fav-count">★ {{.FavCount}} membre(s) ont aimé</span>
+    </div>
+
+    <h2>Commentaires ({{len .Comments}})</h2>
+    {{if .CurrentUser}}
+    <form action="/catalog/series/{{.TmdbId}}/commentaires" method="POST" class="film-comment-form">
+        <textarea name="contenu" rows="3" placeholder="Votre avis sur cette série…" required></textarea>
+        <button type="submit" class="btn btn-accent">Publier</button>
+    </form>
+    {{else}}
+    <p class="notice"><a href="/login">Connectez-vous</a> pour aimer cette série et laisser un commentaire.</p>
+    {{end}}
+
+    <div class="film-comment-list">
+        {{range .Comments}}
+        <article class="film-comment">
+            <div class="film-comment-head">
+                <span class="message-author">{{.AuthorName}}</span>
+                <span class="date">{{.CreatedAt}}</span>
+            </div>
+            <p class="message-body">{{.Contenu}}</p>
+            {{if $.CurrentUser}}{{if or (eq .AuthorId $.CurrentUser.Id) $.CurrentUser.IsAdmin}}
+            <form action="/catalog/commentaires/{{.Id}}/delete" method="POST" class="inline-form" onsubmit="return confirm('Supprimer ce commentaire ?');">
+                <input type="hidden" name="retour" value="/catalog/series/{{$.TmdbId}}#social">
+                <button type="submit" class="link-btn danger">Supprimer</button>
+            </form>
+            {{end}}{{end}}
+        </article>
+        {{else}}
+        <p class="empty">Aucun commentaire pour l'instant. Soyez le premier !</p>
+        {{end}}
+    </div>
+</section>
+
 <p class="catalog-credit">Données fournies par <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a></p>
 {{end}}

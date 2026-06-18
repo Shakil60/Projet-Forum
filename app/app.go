@@ -37,6 +37,7 @@ func InitApp() *App {
 	threadRepository := repositories.InitThreadRepository(db)
 	messageRepository := repositories.InitMessageRepository(db)
 	reactionRepository := repositories.InitReactionRepository(db)
+	filmRepository := repositories.InitFilmRepository(db)
 
 	authService := services.InitAuthService(userRepository)
 	tagService := services.InitTagService(tagRepository)
@@ -45,13 +46,14 @@ func InitApp() *App {
 	reactionService := services.InitReactionService(reactionRepository, messageRepository)
 	adminService := services.InitAdminService(userRepository)
 	tmdbService := services.InitTMDBService(config.GetEnvWithDefault("TMDB_API_KEY", ""))
+	filmService := services.InitFilmService(filmRepository)
 
 	authController := controllers.InitAuthController(authService, renderer)
 	threadController := controllers.InitThreadController(threadService, messageService, tagService, renderer)
 	messageController := controllers.InitMessageController(messageService, renderer)
 	reactionController := controllers.InitReactionController(reactionService)
 	adminController := controllers.InitAdminController(adminService, threadService, renderer)
-	catalogController := controllers.InitCatalogController(tmdbService, renderer)
+	catalogController := controllers.InitCatalogController(tmdbService, filmService, renderer)
 
 	mw := middleware.InitMiddleware(userRepository)
 

@@ -20,4 +20,12 @@ func RegisterCatalogRoutes(r *mux.Router, c *controllers.CatalogController, mw *
 	r.Handle("/catalog/series/{id:[0-9]+}", mw.Optional(http.HandlerFunc(c.ShowSeries))).Methods("GET")
 	r.Handle("/catalog/people", mw.Optional(http.HandlerFunc(c.People))).Methods("GET")
 	r.Handle("/catalog/people/{id:[0-9]+}", mw.Optional(http.HandlerFunc(c.ShowPerson))).Methods("GET")
+
+	// Favoris et commentaires de films (reserves aux membres connectes)
+	r.Handle("/favoris", mw.RequireAuth(http.HandlerFunc(c.Favoris))).Methods("GET")
+	r.Handle("/catalog/movies/{id:[0-9]+}/favori", mw.RequireAuth(http.HandlerFunc(c.ToggleFavori))).Methods("POST")
+	r.Handle("/catalog/movies/{id:[0-9]+}/commentaires", mw.RequireAuth(http.HandlerFunc(c.AddComment))).Methods("POST")
+	r.Handle("/catalog/series/{id:[0-9]+}/favori", mw.RequireAuth(http.HandlerFunc(c.ToggleFavori))).Methods("POST")
+	r.Handle("/catalog/series/{id:[0-9]+}/commentaires", mw.RequireAuth(http.HandlerFunc(c.AddComment))).Methods("POST")
+	r.Handle("/catalog/commentaires/{id:[0-9]+}/delete", mw.RequireAuth(http.HandlerFunc(c.DeleteComment))).Methods("POST")
 }

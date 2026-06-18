@@ -88,3 +88,34 @@ CREATE TABLE reactions (
         REFERENCES utilisateurs(id)
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- Favoris d'un membre sur un film/serie du catalogue (TMDB)
+CREATE TABLE film_favoris (
+    utilisateur_id INT NOT NULL,
+    tmdb_id INT NOT NULL,
+    media_type ENUM('movie', 'tv') NOT NULL,
+    titre VARCHAR(255) NOT NULL,
+    affiche VARCHAR(255),
+    date_ajout TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (utilisateur_id, tmdb_id, media_type),
+
+    CONSTRAINT fk_favoris_utilisateurs
+        FOREIGN KEY (utilisateur_id)
+        REFERENCES utilisateurs(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Commentaires d'un membre sous un film/serie du catalogue
+CREATE TABLE film_commentaires (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tmdb_id INT NOT NULL,
+    media_type ENUM('movie', 'tv') NOT NULL,
+    utilisateur_id INT NOT NULL,
+    contenu TEXT NOT NULL,
+    date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_filcomments_utilisateurs
+        FOREIGN KEY (utilisateur_id)
+        REFERENCES utilisateurs(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB;

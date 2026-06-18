@@ -938,6 +938,66 @@ select {
 
 .media-actions {
     margin-top: 18px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Favoris et commentaires sous un film */
+.film-social {
+    margin: 25px 0;
+}
+
+.film-social-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.fav-count {
+    color: #777;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.film-social h2 {
+    font-size: 18px;
+    margin: 0 0 12px;
+}
+
+.film-comment-form {
+    margin-bottom: 18px;
+}
+
+.film-comment-form textarea {
+    width: 100%;
+    border: 1px solid #c4c7cc;
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-family: inherit;
+    margin-bottom: 8px;
+}
+
+.film-comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.film-comment {
+    background-color: #fff;
+    border: 1px solid #d7d9dd;
+    border-radius: 5px;
+    padding: 12px 14px;
+}
+
+.film-comment-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
 }
 
 .people-row {

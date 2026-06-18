@@ -20,6 +20,7 @@
             <a href="/catalog">Catalogue</a>
             {{if .CurrentUser}}
                 <a href="/threads/new">Nouveau sujet</a>
+                <a href="/favoris">Mes favoris</a>
                 {{if .CurrentUser.IsAdmin}}<a href="/admin">Administration</a>{{end}}
                 <span class="nav-user">{{.CurrentUser.Username}}</span>
                 <form action="/logout" method="POST" class="inline-form">

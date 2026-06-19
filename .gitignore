@@ -18,3 +18,7 @@ data/
 
 # Artefacts navigateur (audit)
 .playwright-mcp/
+
+# Ancien support (remplace par le HTML/PDF)
+presentation-cinetalk.pptx
+docs/presentation-v1-backup.html

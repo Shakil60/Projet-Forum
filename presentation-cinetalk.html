@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CinéTalk — Soutenance B1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --noir:#0B0B0F; --panneau:#15151D; --panneau-2:#1D1C26;
+    --ivoire:#ECEAE3; --gris:#8C8A97; --gris-2:#56545F;
+    --ambre:#E8893B; --ambre-clair:#F6B86A; --vert:#7FC8A0; --bord:#2A2933;
+    --serif:'Inter',sans-serif; --display:'Bebas Neue',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--noir);color:var(--ivoire);font-family:var(--serif);overflow:hidden;-webkit-font-smoothing:antialiased}
+
+  .deck{position:fixed;inset:0}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    padding:6.5vh 7vw 6vh;
+    background:
+      radial-gradient(120% 90% at 80% 6%, rgba(232,137,59,.15), transparent 55%),
+      radial-gradient(90% 80% at 6% 100%, rgba(232,137,59,.06), transparent 60%),
+      var(--noir);
+  }
+  .slide.active{display:flex;animation:entree .45s ease both}
+  @keyframes entree{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .slide::before{content:"";position:absolute;top:0;left:0;right:0;height:16px;
+    background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(0,0,0,.55) 14px 20px),var(--panneau);
+    border-bottom:1px solid var(--bord);opacity:.5}
+
+  /* Structure anti-superposition : en-tete / corps / sous-titre */
+  .scene{flex:none;font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;color:var(--ambre);
+    text-transform:uppercase;display:flex;align-items:center;gap:12px;margin-bottom:auto}
+  .scene .num{color:var(--gris-2)} .scene .bar{width:30px;height:1px;background:var(--ambre);opacity:.6}
+  .body{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:2.4vh 0}
+  .soustitre{flex:none;margin-top:auto;text-align:center;font-size:clamp(13px,1.4vw,17px);
+    color:var(--ivoire);padding:0 6vw;font-weight:500;border-top:1px solid var(--bord);padding-top:2vh}
+  .soustitre b{color:var(--ambre-clair);font-weight:600}
+
+  .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.16em;color:var(--gris);text-transform:uppercase;margin-bottom:14px}
+  h1.titre{font-family:var(--display);font-weight:400;font-size:clamp(38px,5.4vw,76px);line-height:.95;
+    letter-spacing:.01em;text-transform:uppercase;text-wrap:balance}
+  h1.titre .amb{color:var(--ambre)}
+  p.lead{font-size:clamp(15px,1.55vw,20px);color:var(--gris);max-width:46ch;line-height:1.5;margin-top:16px}
+
+  /* Cover / fin */
+  .cover .body{align-items:center;text-align:center}
+  .marque{font-family:var(--display);font-size:clamp(64px,13vw,184px);line-height:.86;letter-spacing:.02em}
+  .marque .amb{color:var(--ambre)}
+  .baseline{font-size:clamp(14px,1.8vw,22px);color:var(--gris);margin-top:8px}
+  .chips{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  .chip{border:1px solid var(--bord);background:rgba(255,255,255,.02);padding:8px 15px;border-radius:999px;
+    font-size:13px;color:var(--ivoire);font-family:var(--mono)}
+  .chip b{color:var(--ambre-clair);font-weight:500}
+  .credits{margin-top:34px}
+  .credits .by{font-family:var(--mono);color:var(--gris-2);font-size:11px;letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:8px}
+  .credits .noms{color:var(--ivoire);font-size:16px}
+
+  /* Grilles & cartes */
+  .grid{display:grid;gap:15px;width:100%}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:linear-gradient(180deg,var(--panneau),var(--panneau-2));border:1px solid var(--bord);border-radius:13px;padding:17px 18px}
+  .card .ic{font-size:20px;margin-bottom:8px;display:block}
+  .card h3{font-size:15px;font-weight:600;margin-bottom:4px}
+  .card p{font-size:13px;color:var(--gris);line-height:1.45}
+  .card .ft{font-family:var(--mono);font-size:10.5px;color:var(--ambre);letter-spacing:.06em;margin-top:8px;display:block}
+
+  /* Verdict */
+  .verdict{display:flex;gap:46px;align-items:center}
+  .bignum{font-family:var(--display);font-size:clamp(110px,17vw,230px);line-height:.8;color:var(--ambre);flex:none}
+  .bignum small{display:block;font-family:var(--mono);font-size:13px;letter-spacing:.18em;color:var(--gris);margin-top:12px;text-transform:uppercase}
+  .ftlist{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 28px;flex:1;list-style:none}
+  .ftlist li{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--ivoire)}
+  .ftlist .tick{color:var(--vert);font-weight:700}
+  .ftlist .code{font-family:var(--mono);color:var(--gris-2);font-size:11.5px;min-width:44px}
+
+  /* Flux d'architecture */
+  .flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;width:100%}
+  .layer{flex:1;min-width:110px;background:var(--panneau);border:1px solid var(--bord);border-radius:11px;padding:15px 12px;text-align:center}
+  .layer .lbl{font-family:var(--mono);font-size:10.5px;color:var(--ambre);letter-spacing:.08em;text-transform:uppercase}
+  .layer .nm{font-size:14.5px;font-weight:600;margin:5px 0 3px}
+  .layer .ds{font-size:11px;color:var(--gris);line-height:1.35}
+  .arrow{display:flex;align-items:center;color:var(--ambre);font-size:18px;padding:0 5px}
+  .flow-note{margin-top:16px;font-size:12.5px;color:var(--gris);font-family:var(--mono)}
+  .flow-note b{color:var(--ambre-clair);font-weight:500}
+
+  /* Listes a puces */
+  ul.bullets{display:flex;flex-direction:column;gap:13px;list-style:none;width:100%}
+  ul.bullets li{display:flex;gap:13px;font-size:15.5px;line-height:1.4}
+  ul.bullets .b{color:var(--ambre);font-weight:700;flex:none} ul.bullets b{color:var(--ivoire);font-weight:600} ul.bullets span{color:var(--gris)}
+
+  /* Deux colonnes */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;width:100%}
+  .panel{background:linear-gradient(180deg,var(--panneau),var(--panneau-2));border:1px solid var(--bord);border-radius:13px;padding:20px 22px}
+  .panel h3{font-size:13.5px;color:var(--ambre-clair);margin-bottom:13px;letter-spacing:.02em;font-family:var(--mono);text-transform:uppercase;font-weight:500}
+  .panel ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .panel li{font-size:14px;color:var(--gris);line-height:1.4;display:flex;gap:9px}
+  .panel li .b{color:var(--ambre)} .panel li b{color:var(--ivoire);font-weight:600}
+
+  .stats{display:flex;gap:36px;flex-wrap:wrap;margin-top:24px}
+  .stat .v{font-family:var(--display);font-size:clamp(38px,4.6vw,60px);color:var(--ambre);line-height:1}
+  .stat .l{font-size:12px;color:var(--gris);font-family:var(--mono);letter-spacing:.05em;margin-top:5px;text-transform:uppercase}
+
+  /* Diagramme integre (cadre clair, taille maximale) */
+  .diag{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;gap:34px;width:100%}
+  .diag img{max-height:100%;max-width:100%;width:auto;height:auto;object-fit:contain;
+    background:#F7F6F2;border-radius:14px;padding:16px;border:1px solid var(--bord);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+  .diag-side{flex:none;max-width:30%}
+  .diag-side h2{font-family:var(--display);font-size:clamp(26px,3.4vw,46px);line-height:1;margin-bottom:14px;text-transform:uppercase}
+  .diag-side p{font-size:14px;color:var(--gris);line-height:1.5}
+  .diag-side .leg{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+  .diag-side .leg span{font-size:13px;color:var(--ivoire);display:flex;gap:9px}
+  .diag-side .leg b{color:var(--ambre);font-weight:700}
+
+  /* Diagramme C4 natif (lisible, dans le theme) */
+  .c4{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%;max-width:560px;margin:6px auto 0}
+  .c4-row{display:flex;gap:16px}
+  .c4-box{background:linear-gradient(180deg,var(--panneau),var(--panneau-2));border:1px solid var(--bord);border-radius:10px;padding:9px 18px;text-align:center;min-width:230px}
+  .c4-box .t{font-weight:600;font-size:14px}
+  .c4-box .s{font-size:11px;color:var(--gris);font-family:var(--mono);margin-top:2px}
+  .c4-actor{background:#22212b;min-width:0;padding:9px 16px}
+  .c4-sys{border:1.5px dashed var(--ambre);border-radius:13px;padding:14px 16px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;width:100%}
+  .c4-sys .sys-lbl{position:absolute;top:-9px;left:16px;background:var(--noir);padding:0 8px;font-family:var(--mono);font-size:10.5px;color:var(--ambre);letter-spacing:.08em}
+  .c4-arrow{color:var(--ambre);font-size:13px;font-family:var(--mono);line-height:1;display:flex;flex-direction:column;align-items:center;gap:1px}
+  .c4-arrow .lbl{font-size:9.5px;color:var(--gris-2)}
+  .c4-ext{border:1.5px dashed var(--gris-2);background:#1a1a22}
+
+  /* HUD */
+  .hud{position:fixed;bottom:16px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+    padding:0 7vw;font-family:var(--mono);font-size:11.5px;color:var(--gris-2);pointer-events:none;z-index:5}
+  .hud .marqueur b{color:var(--ambre)}
+  .hud .nav{pointer-events:auto;display:flex;gap:8px}
+  .hud .nav button{background:var(--panneau);border:1px solid var(--bord);color:var(--ivoire);width:30px;height:30px;
+    border-radius:8px;cursor:pointer;font-size:14px;transition:background .15s,border-color .15s}
+  .hud .nav button:hover{background:var(--panneau-2);border-color:var(--ambre)}
+  .hud .nav button:focus-visible{outline:2px solid var(--ambre);outline-offset:2px}
+  .progress{position:fixed;top:0;left:0;height:3px;background:var(--ambre);z-index:6;transition:width .35s ease}
+
+  @media (prefers-reduced-motion:reduce){.slide.active{animation:none}.progress{transition:none}}
+  @media print{
+    @page{size:1280px 720px;margin:0}
+    html,body{overflow:visible;height:auto;width:1280px}
+    .deck{position:static;inset:auto;height:auto}.hud,.progress{display:none}
+    .slide{display:flex!important;position:relative;inset:auto;width:1280px;height:720px;page-break-after:always;break-after:page;overflow:hidden}
+    .slide:last-child{page-break-after:auto;break-after:auto}.slide.active{animation:none}
+    .diag{flex-direction:row;align-items:center}.diag-side{max-width:30%}
+    .diag img{max-height:540px}
+  }
+  @media screen and (max-width:820px){.verdict{flex-direction:column;gap:14px}.two,.g2,.g3,.g4{grid-template-columns:1fr}.flow{flex-direction:column}.arrow{transform:rotate(90deg);justify-content:center}.diag{flex-direction:column}.diag-side{max-width:100%}}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+  <!-- 00 COVER -->
+  <section class="slide cover active">
+    <div class="body">
+      <div class="marque">Ciné<span class="amb">Talk</span></div>
+      <div class="baseline">Le forum communautaire dédié au cinéma &amp; aux séries</div>
+      <div class="chips">
+        <span class="chip">B1 Informatique · <b>Projet final</b></span>
+        <span class="chip">Application web · <b>Go + MySQL</b></span>
+        <span class="chip">Soutenance · <b>10 min</b></span>
+      </div>
+      <div class="credits"><span class="by">Présenté par</span><span class="noms">Shakil Khaldi&nbsp; · &nbsp;Hugo Berton&nbsp; · &nbsp;Nohan Reis</span></div>
+    </div>
+  </section>
+
+  <!-- 01 PITCH -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">01 / 13</span> — Pitch</div>
+    <div class="body">
+      <div class="kicker">Le projet</div>
+      <h1 class="titre">Un cinéma où l'on <span class="amb">discute</span></h1>
+      <p class="lead">Une plateforme communautaire pour que les passionnés de films et de séries ouvrent des sujets, échangent et réagissent — inspirée de Stack&nbsp;Overflow, Reddit et Discord, appliquée au 7ᵉ&nbsp;art.</p>
+      <div class="grid g3" style="margin-top:26px">
+        <div class="card"><span class="ic">💡</span><h3>Le problème</h3><p>Les avis cinéma sont éparpillés. Pas d'espace structuré par genres pour en débattre.</p></div>
+        <div class="card"><span class="ic">🎬</span><h3>La solution</h3><p>Un forum par fils de discussion, classés par genres, avec réactions et modération.</p></div>
+        <div class="card"><span class="ic">🎟️</span><h3>Le plus</h3><p>Un catalogue connecté à l'API TMDB : films, séries et acteurs dans le site.</p></div>
+      </div>
+    </div>
+    <div class="soustitre">Réunir les cinéphiles autour de <b>fils de discussion thématiques</b>.</div>
+  </section>
+
+  <!-- 02 FONCTIONNALITES -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">02 / 13</span> — À l'affiche</div>
+    <div class="body">
+      <div class="kicker">Présentation fonctionnelle</div>
+      <h1 class="titre" style="font-size:clamp(30px,4vw,52px);margin-bottom:20px">Ce que l'on peut faire</h1>
+      <div class="grid g4">
+        <div class="card"><span class="ic">👤</span><h3>Comptes</h3><p>Inscription &amp; connexion par pseudo ou e-mail.</p><span class="ft">FT-1 · FT-2</span></div>
+        <div class="card"><span class="ic">💬</span><h3>Fils &amp; messages</h3><p>Ouvrir, répondre, modifier, supprimer.</p><span class="ft">FT-3 → FT-7</span></div>
+        <div class="card"><span class="ic">👍</span><h3>Réactions</h3><p>Like / dislike async + score.</p><span class="ft">FT-6 · FT-8</span></div>
+        <div class="card"><span class="ic">🏷️</span><h3>Genres</h3><p>Classer et filtrer les fils.</p><span class="ft">FT-10</span></div>
+        <div class="card"><span class="ic">🔎</span><h3>Recherche</h3><p>Par titre ou genre, réservée aux membres.</p><span class="ft">FT-11</span></div>
+        <div class="card"><span class="ic">📄</span><h3>Pagination</h3><p>10, 20, 30 ou tout afficher.</p><span class="ft">FT-9</span></div>
+        <div class="card"><span class="ic">🛡️</span><h3>Modération</h3><p>Tableau de bord admin, bannissement.</p><span class="ft">FT-12</span></div>
+        <div class="card"><span class="ic">🎞️</span><h3>Catalogue</h3><p>Films &amp; séries via l'API TMDB.</p><span class="ft">Bonus</span></div>
+      </div>
+    </div>
+    <div class="soustitre">Chaque carte correspond à une <b>fonctionnalité du cahier des charges</b>.</div>
+  </section>
+
+  <!-- 03 CAS D'UTILISATION -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">03 / 13</span> — Rôles</div>
+    <div class="body">
+      <div class="diag">
+        <div class="diag-side">
+          <div class="kicker">Conception</div>
+          <h2>Cas d'<span style="color:var(--ambre)">utilisation</span></h2>
+          <p>Trois rôles, du moins au plus de droits — chacun hérite des actions du précédent.</p>
+          <div class="leg">
+            <span><b>Visiteur</b> consulte les fils &amp; le catalogue</span>
+            <span><b>Membre</b> publie, réagit, recherche</span>
+            <span><b>Admin</b> modère &amp; bannit</span>
+          </div>
+        </div>
+        <img src="docs/cas-utilisation.png" alt="Diagramme de cas d'utilisation par rôle">
+      </div>
+    </div>
+    <div class="soustitre">Les <b>interactions</b> de chaque rôle avec la plateforme.</div>
+  </section>
+
+  <!-- 04 CONFORMITE -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">04 / 13</span> — Cahier des charges</div>
+    <div class="body">
+      <div class="kicker">Conformité au sujet · cahier des charges</div>
+      <p class="lead" style="max-width:64ch;margin:0 0 20px">Le sujet impose <b style="color:var(--ivoire)">12 fonctionnalités obligatoires</b>, chacune avec ses règles de gestion. Nous les avons toutes implémentées et <b style="color:var(--ivoire)">vérifiées une à une</b> — du contrôle des droits à la cohérence de la base.</p>
+      <div class="verdict">
+        <div class="bignum">12<small>sur 12 fonctionnalités</small></div>
+        <ul class="ftlist">
+          <li><span class="tick">✓</span><span class="code">FT-1</span>Inscription</li>
+          <li><span class="tick">✓</span><span class="code">FT-2</span>Connexion JWT</li>
+          <li><span class="tick">✓</span><span class="code">FT-3</span>Création de fil</li>
+          <li><span class="tick">✓</span><span class="code">FT-4</span>Consultation</li>
+          <li><span class="tick">✓</span><span class="code">FT-5</span>Messages</li>
+          <li><span class="tick">✓</span><span class="code">FT-6</span>Réactions</li>
+          <li><span class="tick">✓</span><span class="code">FT-7</span>Droits &amp; cascade</li>
+          <li><span class="tick">✓</span><span class="code">FT-8</span>Tri</li>
+          <li><span class="tick">✓</span><span class="code">FT-9</span>Pagination</li>
+          <li><span class="tick">✓</span><span class="code">FT-10</span>Filtre par genre</li>
+          <li><span class="tick">✓</span><span class="code">FT-11</span>Recherche</li>
+          <li><span class="tick">✓</span><span class="code">FT-12</span>Administration</li>
+        </ul>
+      </div>
+    </div>
+    <div class="soustitre">Toutes les <b>fonctionnalités obligatoires</b> respectent leurs règles de gestion.</div>
+  </section>
+
+  <!-- 05 STACK -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">05 / 13</span> — Technique</div>
+    <div class="body">
+      <div class="kicker">Présentation technique · la stack</div>
+      <div class="grid g3" style="margin-top:6px">
+        <div class="card"><span class="ic">🐹</span><h3>Go</h3><p>Routes (gorilla/mux), rendu serveur (html/template), métier, accès BDD.</p></div>
+        <div class="card"><span class="ic">🗄️</span><h3>MySQL 8</h3><p>Base relationnelle InnoDB, clés étrangères, unicité.</p></div>
+        <div class="card"><span class="ic">🔐</span><h3>Sécurité</h3><p>SHA-512 + sel, jeton JWT en cookie HttpOnly.</p></div>
+        <div class="card"><span class="ic">⚡</span><h3>JavaScript</h3><p>Uniquement l'UX : réactions like/dislike en asynchrone.</p></div>
+        <div class="card"><span class="ic">🐳</span><h3>Docker</h3><p>App + MySQL via docker-compose, migrations auto.</p></div>
+        <div class="card"><span class="ic">🎞️</span><h3>API TMDB</h3><p>Catalogue externe, avec cache mémoire (TTL 10 min).</p></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="v">45</div><div class="l">fichiers Go</div></div>
+        <div class="stat"><div class="v">6</div><div class="l">couches</div></div>
+        <div class="stat"><div class="v">6</div><div class="l">tables</div></div>
+        <div class="stat"><div class="v">100%</div><div class="l">rendu serveur</div></div>
+      </div>
+    </div>
+    <div class="soustitre">Go pour <b>tout le métier</b>, JavaScript réservé à l'expérience utilisateur.</div>
+  </section>
+
+  <!-- 06 ARCHITECTURE COUCHES -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">06 / 13</span> — Architecture</div>
+    <div class="body">
+      <div class="kicker">Organisation du code · monolithe en couches (MVC)</div>
+      <h1 class="titre" style="font-size:clamp(26px,3.6vw,46px);margin-bottom:26px">Une requête, six couches</h1>
+      <div class="flow">
+        <div class="layer"><span class="lbl">Entrée</span><div class="nm">Router</div><div class="ds">les routes</div></div>
+        <div class="arrow">→</div>
+        <div class="layer"><span class="lbl">Couche 1</span><div class="nm">Controller</div><div class="ds">valide les entrées</div></div>
+        <div class="arrow">→</div>
+        <div class="layer"><span class="lbl">Couche 2</span><div class="nm">Service</div><div class="ds">logique métier</div></div>
+        <div class="arrow">→</div>
+        <div class="layer"><span class="lbl">Couche 3</span><div class="nm">Repository</div><div class="ds">requêtes SQL</div></div>
+        <div class="arrow">→</div>
+        <div class="layer"><span class="lbl">Données</span><div class="nm">MySQL</div><div class="ds">persistance</div></div>
+      </div>
+      <div class="flow-note">Transversal : <b>Model / Entity</b> · <b>View</b> (html/template) · <b>Middleware</b> (auth, rôle, bannissement)</div>
+    </div>
+    <div class="soustitre">Une <b>séparation claire des responsabilités</b> : chaque couche a un seul rôle.</div>
+  </section>
+
+  <!-- 07 C4 CONTENEURS -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">07 / 13</span> — Architecture</div>
+    <div class="body" style="justify-content:flex-start">
+      <div class="kicker">Modèle C4 · niveau 2 — vue conteneurs</div>
+      <div class="c4">
+        <div class="c4-row">
+          <div class="c4-box c4-actor"><div class="t">👤 Membre / Visiteur</div></div>
+          <div class="c4-box c4-actor"><div class="t">🛡️ Administrateur</div></div>
+        </div>
+        <div class="c4-arrow">↓<span class="lbl">HTTPS</span></div>
+        <div class="c4-sys">
+          <span class="sys-lbl">Système · CinéTalk</span>
+          <div class="c4-box"><div class="t">Navigateur web</div><div class="s">HTML · CSS · JavaScript</div></div>
+          <div class="c4-arrow">↓<span class="lbl">pages &amp; réactions · HTTPS / JSON</span></div>
+          <div class="c4-box"><div class="t">Application Web — Go</div><div class="s">gorilla/mux · html/template · JWT</div></div>
+          <div class="c4-arrow">↓<span class="lbl">requêtes SQL · port 3306</span></div>
+          <div class="c4-box"><div class="t">Base de données</div><div class="s">MySQL 8 · InnoDB</div></div>
+        </div>
+        <div class="c4-arrow">↓<span class="lbl">HTTPS / JSON</span></div>
+        <div class="c4-box c4-ext"><div class="t">🎞️ API TMDB</div><div class="s">service externe · catalogue cinéma</div></div>
+      </div>
+    </div>
+    <div class="soustitre">Les <b>grandes briques</b> du système : du navigateur à la base, en passant par l'API TMDB.</div>
+  </section>
+
+  <!-- 08 MLD -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">08 / 13</span> — Données</div>
+    <div class="body">
+      <div class="diag">
+        <div class="diag-side">
+          <div class="kicker">Modèle logique de données</div>
+          <h2>Base <span style="color:var(--ambre)">relationnelle</span></h2>
+          <p>6 tables liées par des clés étrangères, avec suppression en cascade.</p>
+          <div class="leg">
+            <span><b>›</b> utilisateurs, fils, messages</span>
+            <span><b>›</b> reactions, tags, fil_tags</span>
+            <span><b>›</b> ON DELETE CASCADE</span>
+            <span><b>›</b> UNIQUE(message, user)</span>
+          </div>
+        </div>
+        <img src="docs/mld.png" alt="Modèle logique de données (MLD)">
+      </div>
+    </div>
+    <div class="soustitre">L'<b>intégrité</b> est garantie directement par la base de données.</div>
+  </section>
+
+  <!-- 09 SECURITE -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">09 / 13</span> — Sécurité</div>
+    <div class="body">
+      <div class="kicker">Nos choix de sécurité</div>
+      <h1 class="titre" style="font-size:clamp(28px,3.8vw,50px);margin-bottom:22px">Comptes protégés</h1>
+      <div class="grid g2">
+        <div class="card"><span class="ic">🔑</span><h3>Mots de passe</h3><p><b style="color:var(--ivoire)">SHA-512 + sel</b> unique par compte — jamais stockés en clair. Règles : 12 caractères, majuscule, caractère spécial.</p></div>
+        <div class="card"><span class="ic">🎫</span><h3>Sessions</h3><p>Jeton <b style="color:var(--ivoire)">JWT</b> signé, en cookie <b style="color:var(--ivoire)">HttpOnly</b>, vérifié à chaque requête par un middleware.</p></div>
+        <div class="card"><span class="ic">👮</span><h3>Droits d'accès</h3><p>Séparation auteur / <b style="color:var(--ivoire)">administrateur</b> ; un compte banni perd l'accès aux fonctionnalités authentifiées.</p></div>
+        <div class="card"><span class="ic">🛡️</span><h3>Robustesse</h3><p>Requêtes SQL <b style="color:var(--ivoire)">paramétrées</b> (anti-injection) et validation des entrées côté serveur.</p></div>
+      </div>
+    </div>
+    <div class="soustitre">La sécurité est <b>pensée à chaque couche</b>, pas ajoutée à la fin.</div>
+  </section>
+
+  <!-- 10 CATALOGUE + CACHE -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">10 / 13</span> — Bonus</div>
+    <div class="body">
+      <div class="kicker">Catalogue cinéma · API TMDB</div>
+      <h1 class="titre" style="font-size:clamp(30px,4vw,54px)">Le catalogue, en <span class="amb">cache</span></h1>
+      <p class="lead">Films, séries et acteurs viennent en direct de The Movie Database. Pour ne pas rappeler l'API à chaque page, les réponses sont gardées 10&nbsp;minutes en mémoire.</p>
+      <div class="stats">
+        <div class="stat"><div class="v">0,35s</div><div class="l">1ᵉʳ appel (API)</div></div>
+        <div class="stat"><div class="v">0,01s</div><div class="l">depuis le cache</div></div>
+        <div class="stat"><div class="v">×26</div><div class="l">plus rapide</div></div>
+      </div>
+    </div>
+    <div class="soustitre">Un catalogue <b>rapide</b> (cache mémoire) et <b>social</b> : favoris, commentaires et lien vers le forum.</div>
+  </section>
+
+  <!-- 11 EQUIPE -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">11 / 13</span> — Coulisses</div>
+    <div class="body">
+      <div class="kicker">Organisation du travail en équipe</div>
+      <h1 class="titre" style="font-size:clamp(28px,3.8vw,50px);margin-bottom:18px">Qui a fait quoi</h1>
+      <div class="grid g3">
+        <div class="card"><span class="ic">🔐</span><h3>Shakil Khaldi</h3><p>Authentification (JWT, hachage) &amp; administration / modération.</p></div>
+        <div class="card"><span class="ic">🎬</span><h3>Hugo Berton</h3><p>Fils, recherche, catalogue TMDB, interface &amp; Docker.</p></div>
+        <div class="card"><span class="ic">💬</span><h3>Nohan Reis</h3><p>Messages, réactions &amp; conception de la base de données.</p></div>
+      </div>
+      <ul class="bullets" style="margin-top:20px">
+        <li><span class="b">▸</span><span>Tâches suivies sur <b>Trello</b> (À faire / En cours / Terminé), une carte par <b>FT-1 à FT-12</b>.</span></li>
+        <li><span class="b">▸</span><span>Dépôt <b>GitHub</b> partagé, commits <b>conventionnels</b> (<span style="font-family:var(--mono);color:var(--ambre-clair)">feat()</span>, <span style="font-family:var(--mono);color:var(--ambre-clair)">fix()</span>…).</span></li>
+      </ul>
+    </div>
+    <div class="soustitre">L'architecture en couches a permis de <b>se répartir le travail par domaine</b>.</div>
+  </section>
+
+  <!-- 12 DIFFICULTES -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">12 / 13</span> — Imprévus</div>
+    <div class="body">
+      <div class="kicker">Difficultés rencontrées &amp; solutions</div>
+      <div class="grid g2" style="margin-top:6px">
+        <div class="card"><span class="ic">🧩</span><h3>Penser en couches</h3><p><b style="color:var(--ivoire)">Défi :</b> séparer router / controller / service / repository.<br><b style="color:var(--ambre-clair)">Solution :</b> injection des dépendances, un rôle par couche.</p></div>
+        <div class="card"><span class="ic">🔑</span><h3>Auth &amp; JWT</h3><p><b style="color:var(--ivoire)">Défi :</b> sécuriser les sessions sans casser la navigation.<br><b style="color:var(--ambre-clair)">Solution :</b> JWT en cookie HttpOnly + middleware.</p></div>
+        <div class="card"><span class="ic">🎞️</span><h3>Intégrer TMDB</h3><p><b style="color:var(--ivoire)">Défi :</b> API externe, lente et appelée souvent.<br><b style="color:var(--ambre-clair)">Solution :</b> cache mémoire avec expiration.</p></div>
+        <div class="card"><span class="ic">🌿</span><h3>Travailler à trois</h3><p><b style="color:var(--ivoire)">Défi :</b> coder ensemble sans se marcher dessus.<br><b style="color:var(--ambre-clair)">Solution :</b> Trello + Git, découpage par fonctionnalités.</p></div>
+      </div>
+    </div>
+    <div class="soustitre">Chaque difficulté a mené à une <b>décision technique que l'on sait expliquer</b>.</div>
+  </section>
+
+  <!-- 13 CONCLUSION -->
+  <section class="slide">
+    <div class="scene"><span class="bar"></span>Scène <span class="num">13 / 13</span> — Générique de fin</div>
+    <div class="body">
+      <div class="two">
+        <div>
+          <div class="kicker">Conclusion</div>
+          <h1 class="titre" style="font-size:clamp(28px,3.8vw,50px)">Un projet <span class="amb">complet</span></h1>
+          <p class="lead">12/12 fonctionnalités, une architecture propre, une base sécurisée et un bonus catalogue — installable en une commande.</p>
+        </div>
+        <div class="panel">
+          <h3>🚀 Pistes d'amélioration</h3>
+          <ul>
+            <li><span class="b">▸</span><span>Notifications en <b>temps réel</b> (WebSockets).</span></li>
+            <li><span class="b">▸</span><span><b>Profils</b> utilisateurs &amp; avatars.</span></li>
+            <li><span class="b">▸</span><span><b>Tests automatisés</b> sur la logique métier.</span></li>
+            <li><span class="b">▸</span><span>Lier un fil <b>à une fiche film</b> du catalogue.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="soustitre">Du back-end à la base de données : <b>toutes les notions de l'année</b> mises en pratique.</div>
+  </section>
+
+  <!-- 14 FIN -->
+  <section class="slide cover">
+    <div class="body">
+      <div class="kicker" style="margin-bottom:20px">Fin · Place aux questions</div>
+      <div class="marque" style="font-size:clamp(52px,10vw,138px)">Merci<span class="amb">.</span></div>
+      <div class="baseline">CinéTalk — la communauté des passionnés de cinéma &amp; de séries</div>
+      <div class="chips">
+        <span class="chip">Démo · <b>localhost:8080</b></span>
+        <span class="chip">admin · <b>Admin@CineTalk1</b></span>
+        <span class="chip">GitHub · <b>Projet-Forum</b></span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="hud">
+  <div class="marqueur">CINÉTALK · SOUTENANCE B1 &nbsp;—&nbsp; <b id="cur">01</b> / <span id="tot">15</span></div>
+  <div class="nav"><button id="prev" aria-label="Diapo précédente">‹</button><button id="next" aria-label="Diapo suivante">›</button></div>
+</div>
+
+<script>
+  const slides=Array.from(document.querySelectorAll('.slide'));
+  const total=slides.length;let i=0;
+  const cur=document.getElementById('cur'),progress=document.getElementById('progress');
+  document.getElementById('tot').textContent=String(total).padStart(2,'0');
+  function show(n){i=Math.max(0,Math.min(total-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    cur.textContent=String(i+1).padStart(2,'0');progress.style.width=((i+1)/total*100)+'%';}
+  function next(){show(i+1)}function prev(){show(i-1)}
+  document.getElementById('next').addEventListener('click',next);
+  document.getElementById('prev').addEventListener('click',prev);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next()}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}
+    else if(e.key==='Home'){show(0)}else if(e.key==='End'){show(total-1)}
+    else if(e.key.toLowerCase()==='f'){document.fullscreenElement?document.exitFullscreen?.():document.documentElement.requestFullscreen?.()}
+  });
+  document.getElementById('deck').addEventListener('click',e=>{if(e.target.closest('.hud'))return;(e.clientX>window.innerWidth/2)?next():prev()});
+  const start=parseInt((location.hash||'').slice(1),10);
+  show(Number.isFinite(start)?start:0);
+</script>
+</body>
+</html>
